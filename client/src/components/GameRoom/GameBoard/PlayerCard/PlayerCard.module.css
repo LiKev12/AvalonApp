@@ -1,0 +1,143 @@
+.PlayerCard {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    margin: -5em;
+    border: 3px solid #808080;
+    padding: 6px;
+    border-radius: 50%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    /* background-image: url(../../../../../avatars/Merlin.png); */
+    background-size: 160px 160px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* border: blue solid 8px; */
+}
+
+.PlayerCard2 {
+    display: block;
+    /* overflow: hidden; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160px;
+    height: 160px;
+    margin: -5em;
+    border: 3px solid #808080;
+    padding: 6px;
+    border-radius: 50%;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    /* background-image: url(../../../../../avatars/Merlin.png); */
+    background-size: 160px 160px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /* border: blue solid 8px; */
+}
+
+.MissionMarkerWooden {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    background-image: url('../../../../media/Markers/Mission_Marker.png');
+
+    background-size: 80px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.MissionMarker {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    background-image: url('../../../../media/Markers/Mission_Marker.png');
+
+    background-size: 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.LeaderMarker {
+    position: absolute;
+    top: 30%;
+    right: 5%;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    background: url('../../../../media/Markers/Leader_Marker.png');
+    background-size: 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.ExcaliburMarker {
+    position: absolute;
+    top: 30%;
+    right: 62%;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    background: url('../../../../media/Markers/Excalibur_Marker.png');
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.HammerMarker {
+    position: absolute;
+    top: 30%;
+    right: 62%;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: auto;
+    background: url('../../../../media/Markers/Hammer_Marker.png');
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.NameBanner {
+    color: white;
+    position: absolute;
+    bottom: 30px;
+    left: 0px;
+    width: 100%;
+    background-color: rgb(0, 0, 102, 0.8);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: Algerian;
+}
+
+.NameBanner2 {
+    color: white;
+    position: absolute;
+    bottom: -20px;
+    left: 0px;
+    width: 100%;
+    background-color: #212529;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-family: Algerian;
+    border-radius: 8px;
+    border: 2px solid grey;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+}

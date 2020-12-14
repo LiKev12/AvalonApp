@@ -1,0 +1,25 @@
+.GameBoard {
+    position: relative;
+    width: 50em;
+    height: 50em;
+    padding: 7em;
+    border-radius: 50%;
+    /* margin: 1.75em auto 0; */
+    margin: 0 auto;
+
+    background: url('../../../media/Tables/Table.png');
+    background-size: 50em;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* https://wall.alphacoders.com/by_collection.php?id=369 */
+.GameBackground {
+    background: url('../../../media/Backgrounds/Castle.jpg');
+    background-repeat: no-repeat;
+    /* background-position: center; */
+    /* background-size: 100%; */
+    padding: 1.75em;
+    width: 100%;
+    height: 100%;
+}

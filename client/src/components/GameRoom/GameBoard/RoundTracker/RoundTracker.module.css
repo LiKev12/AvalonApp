@@ -1,0 +1,29 @@
+.RoundTracker {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    top: 25%;
+    width: 300px;
+    height: 100px;
+    padding: 6px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    font-size: 24px;
+}
+
+.RoundTrackerToken {
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    text-align: center;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}

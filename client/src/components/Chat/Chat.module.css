@@ -1,0 +1,32 @@
+.ChatTimestamp {
+    width: 5%;
+    color: #b0b0b0;
+}
+
+.ChatUsername {
+    width: 15%;
+}
+
+.ChatMessage {
+    width: 80%;
+}
+
+.OuterTableContainer {
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    background: #343a40;
+    /* background: red; */
+}
+
+.TableHeader {
+    background: #d0f9f9;
+}
+
+.TableBodyContainer {
+    height: 300px;
+    overflow: auto;
+}
+
+.TableBody {
+    color: white;
+    font-family: Arial;
+}

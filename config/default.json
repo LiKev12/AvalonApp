@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://sample_user:kevin123@cluster0-oqjxe.mongodb.net/avalon-app-test?retryWrites=true&w=majority",
+    "jwtSecret": "myJWTsecret"
+}

@@ -1,0 +1,45 @@
+2020/11/17
+[] import media (and cut shapes to circles)
+[] create Game Model (type any?)
+[] double click to trigger "simultaneous responses"?
+[] use socket for only chat
+[] hover effect for numbers (missions)
+[X] transfer all files besides 'server.js' to server folder
+[] 
+[] 
+[] 
+
+
+[] About Page (0.5)
+[] Rules Page (0.5)
+[] Home Page (0.5)
+[] Game Lobby (1)
+[] 
+
+
+[X] Create game in Lobby
+[] Auth workflow for game
+[X] Use axios api directly in component to getRooms (no need to store games in redux state)
+
+
+
+11/30
+[] Make every action (CREATE, SETUP, etc. ) atomic (all-or-nothing), and check if game exists (error-proof it)
+
+
+
+12/1
+[] finish handle setup (create board file, getBoard as a function of roles, num_players)
+[] make a centralized characters list (and test it! have fun with it)
+    - consider:
+        - gamesetupmodal (client)
+        - server game core (would need to update 2 files)
+[] Make room leader tracked on server instead of client
+[] Create ordered_ids and ordered_players to init single board view (and handshake by id on client-side)
+
+
+
+
+Production
+- [] Config and database name
+- [] 
