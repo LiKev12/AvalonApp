@@ -15,6 +15,10 @@ const RoomSchema = new Schema(
         is_public: {
             type: Boolean,
             required: true
+        },
+        is_rated: {
+            type: Boolean,
+            required: true
         }
     },
     { collection: 'Rooms' }

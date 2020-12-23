@@ -12,7 +12,6 @@ export class ShoppingList extends Component {
     }
 
     onDeleteClick = id => {
-        console.log('deleted');
         this.props.deleteItem(id);
     };
 

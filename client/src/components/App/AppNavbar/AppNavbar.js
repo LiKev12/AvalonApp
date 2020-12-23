@@ -18,13 +18,11 @@ class AppNavbar extends Component {
     // DELETE LATER----------------
     componentDidMount() {
         socket.on('testbuttonclient', data => {
-            console.log('server data');
-            console.log(data);
+            console.log('server data', data);
         });
     }
 
     handleTestButton = () => {
-        console.log('handled');
         socket.emit('testbuttonserver');
     };
 

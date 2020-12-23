@@ -14,25 +14,27 @@ import Oberon from '../../../../media/RoleAvatars/Oberon.png';
 import Unknown from '../../../../media/RoleAvatars/Unknown.png';
 
 const playerCard = props => {
-    console.log('p', props);
-    let { player, player_idx, total_num_players, onClickPlayerCard, button } = props;
-    let {
+    const { player, player_idx, total_num_players, onClickPlayerCard, button } = props;
+    const {
         user_name,
         isSelected,
         isLeader,
         isHammer,
         isGivenExcalibur,
+        isGivenLOTL,
         activeState,
         roleAppearsAs,
         teamAppearsAs
     } = player;
-    let overrideStyle = getStyle(teamAppearsAs, roleAppearsAs, activeState, player_idx, total_num_players, button);
+    const overrideStyle = getStyle(teamAppearsAs, roleAppearsAs, activeState, player_idx, total_num_players, button);
     const displayedUserName = isHammer ? `\u2606${user_name}` : user_name;
     return (
-        <div className={classes.PlayerCard2} style={overrideStyle} onClick={() => onClickPlayerCard(player_idx)}>
+        <div className={classes.PlayerCard} style={overrideStyle} onClick={() => onClickPlayerCard(player_idx)}>
             {isLeader ? <div className={classes.LeaderMarker}></div> : null}
             {isSelected ? <div className={classes.MissionMarker}></div> : null}
-            <div className={classes.NameBanner2}>{displayedUserName}</div>
+            {isGivenExcalibur ? <div className={classes.ExcaliburMarker}></div> : null}
+            {isGivenLOTL ? <div className={classes.LadyMarker}></div> : null}
+            <div className={classes.NameBanner}>{displayedUserName}</div>
         </div>
     );
 };
@@ -40,7 +42,7 @@ const playerCard = props => {
 playerCard.propTypes = {
     /**
      * player:
-     * { user_name, isSelected, isLeader, isHammer, isGivenExcalibur, activeState, roleAppearsAs, teamAppearsAs }
+     * { user_name, isSelected, isLeader, isHammer, isGivenExcalibur, isGivenLOTL, activeState, roleAppearsAs, teamAppearsAs }
      */
     player: PropTypes.object,
     player_idx: PropTypes.number,
@@ -71,7 +73,8 @@ const map_team_to_border = {
 const mapActiveState = {
     IS_STILL_VOTING: '0 0 20px yellow',
     IS_TARGETED_BY_EXCALIBUR: '0 0 20px purple',
-    IS_TARGETED_BY_ASSASSIN: '0 0 20px red'
+    IS_TARGETED_BY_ASSASSIN: '0 0 20px red',
+    IS_TARGETED_BY_LOTL: '0 0 20px #00FFFF'
 };
 
 const getDegreeRotation = (player_idx, total_num_players) => {

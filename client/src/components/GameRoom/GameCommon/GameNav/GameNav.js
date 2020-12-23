@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
-import GameChat from '../../../Chat/Chat';
-import GameVotingRecord from './GameVotingRecord/GameVotingRecord';
 import classes from './GameNav.module.css';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
+
+import GameChat from '../../../Chat/Chat';
+import GameVotingRecord from './GameVotingRecord/GameVotingRecord';
+import GameTranscript from './GameTranscript/GameTranscript';
 
 export class GameNav extends Component {
     state = {
-        activeTab: 'Chat'
+        activeTab: 'Transcript'
     };
 
     toggleActiveTab = newActiveTab => {
@@ -40,18 +43,37 @@ export class GameNav extends Component {
                             Record
                         </NavLink>
                     </NavItem>
+                    <NavItem>
+                        <NavLink
+                            onClick={() => {
+                                this.toggleActiveTab('Transcript');
+                            }}
+                            className={classnames({ active: this.state.activeTab === 'Transcript' })}
+                        >
+                            Transcript
+                        </NavLink>
+                    </NavItem>
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="Chat">
-                        <GameChat room={this.props.room_id} />
+                        <GameChat room={this.props.room} />
                     </TabPane>
                     <TabPane tabId="Record">
                         <GameVotingRecord voting_record={this.props.voting_record} />
+                    </TabPane>
+                    <TabPane tabId="Transcript">
+                        <GameTranscript transcript={this.props.transcript} />
                     </TabPane>
                 </TabContent>
             </div>
         );
     }
 }
+
+GameNav.propTypes = {
+    room: PropTypes.string,
+    voting_record: PropTypes.object,
+    transcript: PropTypes.array
+};
 
 export default GameNav;

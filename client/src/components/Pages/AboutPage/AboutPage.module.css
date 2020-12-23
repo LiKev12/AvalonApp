@@ -1,0 +1,20 @@
+.AboutPage {
+    background: #f9f9f9;
+    color: #404040;
+    padding-top: 10px;
+}
+
+.AboutPage img {
+    width: 150px;
+    height: 150px;
+    margin: 20px;
+}
+
+.Avatars {
+    text-align: center;
+}
+
+.AboutTextContainer {
+    text-align: center;
+    padding-bottom: 20px;
+}

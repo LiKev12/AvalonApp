@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import { Button, Container } from 'reactstrap';
+import { Container } from 'reactstrap';
 import StatsIndividualHistory from './StatsIndividualHistory/StatsIndividualHistory';
 import StatsIndividualOverall from './StatsIndividualOverall/StatsIndividualOverall';
 import StatsIndividualByRoles from './StatsIndividualByRoles/StatsIndividualByRoles';

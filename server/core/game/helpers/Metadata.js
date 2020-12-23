@@ -2,25 +2,25 @@ const ResourceRoles = require('../resources/Roles');
 
 class Metadata {
     constructor() {
-        console.log('new metadata object!');
         //
         this.hasLocked = false;
         this.hasSetup = false;
         this.hasStarted = false;
         this.hasEnded = false;
+        this.roomLeaderId = null;
         //
         this.players = [];
-        // see which of these below you actually need...
         this.ordered_players = [];
         this.ordered_ids = [];
         this.map_id_to_idx = {};
         this.map_idx_to_id = {};
-        this.assassin_performer = null;
-        this.correct_assassin_target = null;
         //
         this.num_players = null;
         this.board = null;
         this.features = null;
+        //
+        this.assassin_performer = null;
+        this.correct_assassin_target = null;
     }
 
     getNumSpotsOnMission(mission) {
@@ -34,23 +34,26 @@ class Metadata {
      *
      */
 
-    handleEnter(user_id, user_name, view) {
+    handleEnter(user_id, user_name) {
         if (!this.hasLocked) {
             const isPlayerInGame = this.players.some(player => player.user_id === user_id);
-            if (!isPlayerInGame && !!user_id) {
-                console.log('[entering player]', { user_id, user_name });
+            if (!isPlayerInGame) {
                 this.players.push({ user_id, user_name });
-                view.handleEnter(user_id, user_name);
+                this.roomLeaderId = this.players[0].user_id;
             }
         }
     }
 
-    handleLeave(user_id, view) {
+    handleLeave(user_id) {
         if (!this.hasLocked) {
             const isPlayerInGame = this.players.some(player => player.user_id === user_id);
-            if (isPlayerInGame && !!user_id) {
+            if (isPlayerInGame) {
                 this.players = this.players.filter(playerObj => playerObj.user_id !== user_id);
-                view.handleLeave(user_id);
+                if (this.players.length > 0) {
+                    this.roomLeaderId = this.players[0].user_id;
+                } else {
+                    this.roomLeaderId = null;
+                }
             }
         }
     }
@@ -69,13 +72,7 @@ class Metadata {
         this.map_id_to_idx = this._init_map_id_to_idx();
         this.map_idx_to_id = this._init_map_idx_to_id();
         this.assassin_performer = this._init_assassin_performer();
-
-        // Create views
-        // board
-        // button
-        // VOTING_RECORD
-        // MISSION_TRACKER
-        // ROUND_TRACKER
+        this.correct_assassin_target = this._init_correct_assassin_target();
     }
 
     handleStart() {
@@ -157,25 +154,31 @@ class Metadata {
 
     _init_assassin_performer() {
         const orderOfSelection = ['Assassin', 'Morgana', 'Minion', 'Mordred', 'Oberon'];
+        let assassin_performer_user_id = null;
+        let found = false;
         orderOfSelection.forEach(roleOfChoice => {
             this.ordered_players.forEach(playerObj => {
-                const { role, user_id } = playerObj;
-                if (role === roleOfChoice) {
-                    return user_id;
+                if (!found) {
+                    const { role, user_id } = playerObj;
+                    if (role === roleOfChoice) {
+                        assassin_performer_user_id = user_id;
+                        found = true;
+                    }
                 }
             });
         });
-        return null; // Should never reach here but ok
+        return assassin_performer_user_id;
     }
 
     _init_correct_assassin_target() {
+        let assassin_target_user_id = null;
         this.ordered_players.forEach(playerObj => {
             const { role, user_id } = playerObj;
             if (role === 'Merlin') {
-                return user_id;
+                assassin_target_user_id = user_id;
             }
         });
-        return null; // Should never reach here but ok
+        return assassin_target_user_id;
     }
 
     get() {

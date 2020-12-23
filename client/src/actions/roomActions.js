@@ -15,18 +15,6 @@ export const getRooms = () => dispatch => {
         .catch(err => dispatch(returnErrors(err.response.data, err.response.status)));
 };
 
-export const addRoom = room_id => (dispatch, getState) => {
-    axios
-        .post('/api/rooms', room_id, tokenConfig(getState))
-        .then(res =>
-            dispatch({
-                type: ADD_ROOM_ID,
-                payload: res.data
-            })
-        )
-        .catch(err => dispatch(returnErrors(err.response.data, err.response.status)));
-};
-
 export const addRoomWithoutDispatch = room_data => (dispatch, getState) => {
     axios.post('/api/rooms', room_data, tokenConfig(getState));
     // .then(res => console.log('res', res))

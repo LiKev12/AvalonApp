@@ -55,6 +55,8 @@ io.on('connection', sock => {
     socketChatListener.testbuttonserver(io, sock, Avalon);
 
     socketGameListener.server_game_handle_CREATE(io, sock, Avalon);
+    socketGameListener.server_game_handle_INITIALIZE(io, sock, Avalon);
+    socketGameListener.server_game_handle_SPECTATE(io, sock, Avalon);
     socketGameListener.server_game_handle_ENTER(io, sock, Avalon);
     socketGameListener.server_game_handle_LEAVE(io, sock, Avalon);
     socketGameListener.server_game_handle_LOCK(io, sock, Avalon);
@@ -67,6 +69,9 @@ io.on('connection', sock => {
     socketGameListener.server_game_handle_ASSASSINATE(io, sock, Avalon);
     socketGameListener.server_game_handle_GIVE_EXCALIBUR(io, sock, Avalon);
     socketGameListener.server_game_handle_USE_EXCALIBUR(io, sock, Avalon);
+    socketGameListener.server_game_handle_CONFIRM_EXCALIBUR(io, sock, Avalon);
+    socketGameListener.server_game_handle_USE_LOTL(io, sock, Avalon);
+    socketGameListener.server_game_handle_CONFIRM_LOTL(io, sock, Avalon);
 
     socketGameListener.server_game_lobby_data(io, sock, Avalon);
     socketGameListener.server_game_view_data(io, sock, Avalon);

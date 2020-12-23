@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import classes from './GameSetupModal.module.css';
 import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, CustomInput, Alert } from 'reactstrap';
 
 class GameSetupModal extends Component {
     state = {
         modal: false,
+        buttonDisabled: false,
         num_roles_added: 0,
         error_msg: null,
         roles: {
@@ -56,8 +58,6 @@ class GameSetupModal extends Component {
             features,
             num_players: this.props.num_players
         };
-        console.log('setup', setup);
-
         return setup;
     }
 
@@ -73,6 +73,9 @@ class GameSetupModal extends Component {
         }
         let final_setup = this.get_final_setup();
         this.props.onSetup(final_setup);
+        this.setState({
+            buttonDisabled: true
+        });
         this.toggle();
     };
 
@@ -105,7 +108,13 @@ class GameSetupModal extends Component {
 
         return (
             <div>
-                <Button color="dark" style={{ marginTop: '2rem' }} onClick={this.toggle} block>
+                <Button
+                    className={classes.Button}
+                    block
+                    disabled={this.state.buttonDisabled}
+                    color="dark"
+                    onClick={this.toggle}
+                >
                     Create Game
                 </Button>
 
@@ -122,7 +131,12 @@ class GameSetupModal extends Component {
                                 <br></br>
                                 <Label for="role_selection">Other:</Label>
                                 {other_inputs}
-                                <Button color="dark" style={{ marginTop: '2rem' }} block>
+                                <Button
+                                    color="dark"
+                                    block
+                                    disabled={this.state.buttonDisabled}
+                                    style={{ marginTop: '2rem' }}
+                                >
                                     Submit
                                 </Button>
                             </FormGroup>

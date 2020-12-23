@@ -1,6 +1,5 @@
 class History {
     constructor(board) {
-        console.log('new history object!');
         this.record = {
             1: { 1: null, 2: null, 3: null, 4: null, 5: null },
             2: { 1: null, 2: null, 3: null, 4: null, 5: null },
@@ -44,13 +43,14 @@ class History {
     }
 
     updateSummary(mission, isPassed) {
-        this.summary[mission] = isPassed;
+        this.summary[mission]['isPassed'] = isPassed;
     }
 
-    updateRecordWithVotesAfterMission(mission, round, players_voted_mission, isPassed, player_to_excalibur) {
+    updateRecordWithVotesAfterMission(mission, round, players_voted_mission, isPassed) {
         this.record[mission][round]['votes_mission'] = [...players_voted_mission];
         this.record[mission][round]['isPassed'] = isPassed;
-        this.record[mission][round]['player_to_excalibur'] = player_to_excalibur;
+        const isExcaliburUsed = !!this.record[mission][round]['player_to_excalibur'];
+        this.record[mission][round]['isExcaliburUsed'] = isExcaliburUsed;
     }
 
     updateRecordWithVotesAfterRound(mission, round, players_voted_round, isApproved) {
@@ -60,8 +60,17 @@ class History {
         this.record[mission][round]['isPassed'] = null;
     }
 
-    updateRecordWithGivenExcalibur(mission, round, player_given_excalibur) {
+    updateRecordWithPlayerGivenExcalibur(mission, round, player_given_excalibur) {
         this.record[mission][round]['player_given_excalibur'] = player_given_excalibur;
+    }
+
+    updateRecordWithPlayerToExcalibur(mission, round, player_to_excalibur) {
+        this.record[mission][round]['player_to_excalibur'] = player_to_excalibur;
+    }
+
+    updateRecordWithLOTL(mission, round, player_given_lotl, player_to_lotl) {
+        this.record[mission][round]['player_given_lotl'] = player_given_lotl;
+        this.record[mission][round]['player_to_lotl'] = player_to_lotl;
     }
 
     updateRecordWithTeam(mission, round, user_id, players_selected) {

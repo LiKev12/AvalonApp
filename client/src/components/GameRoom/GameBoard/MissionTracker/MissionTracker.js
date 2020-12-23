@@ -33,24 +33,26 @@ missionTracker.propTypes = {
 
 export default missionTracker;
 
+const mapMissionStatusToToken = {
+    null: MissionTrackerTokenNull,
+    true: MissionTrackerTokenPass,
+    false: MissionTrackerTokenFail
+};
+
 const getMissionTrackerToken = (isPassed, num_spots_on_mission, num_fails_required) => {
-    if (isPassed === null) {
-        return (
-            <div className={classes.MissionTrackerToken} style={{ backgroundImage: `url(${MissionTrackerTokenNull})` }}>
-                {num_spots_on_mission} | {num_fails_required}
-            </div>
-        );
-    } else if (isPassed === true) {
-        return (
-            <div className={classes.MissionTrackerToken} style={{ backgroundImage: `url(${MissionTrackerTokenPass})` }}>
-                {num_spots_on_mission} | {num_fails_required}
-            </div>
-        );
-    } else if (isPassed === false) {
-        return (
-            <div className={classes.MissionTrackerToken} style={{ backgroundImage: `url(${MissionTrackerTokenFail})` }}>
-                {num_spots_on_mission} | {num_fails_required}
-            </div>
-        );
-    }
+    const missionTrackerText = (
+        <div className={classes.MissionTrackerText}>
+            {num_spots_on_mission}
+            {num_fails_required > 1 ? <sub className={classes.MissionTrackerSubtext}>{num_fails_required}</sub> : null}
+        </div>
+    );
+
+    return (
+        <div
+            className={classes.MissionTrackerToken}
+            style={{ backgroundImage: `url(${mapMissionStatusToToken[isPassed]})` }}
+        >
+            {missionTrackerText}
+        </div>
+    );
 };

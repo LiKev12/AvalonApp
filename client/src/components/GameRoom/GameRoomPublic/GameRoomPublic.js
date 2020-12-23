@@ -1,18 +1,29 @@
 import React, { Component } from 'react';
-import { Button, Container } from 'reactstrap';
+import classes from './GameRoomPublic.module.css';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { socket } from '../../../service/socket';
+import { Button, Container } from 'reactstrap';
 
 import AccessDeniedPage from '../../Pages/AccessDeniedPage/AccessDeniedPage';
 import GameBoard from '../GameBoard/GameBoard';
+import GameEnterModal from '../GameEnterModal/GameEnterModal';
 import GameNav from '../GameCommon/GameNav/GameNav';
 import GameSetupModal from '../GameSetupModal/GameSetupModal';
 import InvalidGamePage from '../../Pages/InvalidGamePage/InvalidGamePage';
 import PlayersList from '../GameCommon/PlayersList/PlayersList';
+import LoadingSpinner from '../../Pages/Loading/LoadingSpinner';
 
 export class GameRoomPublic extends Component {
     state = {
+        /**
+         * purely for client-side (need to wait for socket request to come back, timeout => socket => update state)
+         */
+        isLoading: true,
+        /**
+         * if game is created on server side
+         */
+        isValid: false,
         /**
          * if hasLocked, show GameSetupModal
          */
@@ -25,6 +36,10 @@ export class GameRoomPublic extends Component {
          * if !hasStarted, show PlayersList
          */
         hasStarted: false,
+        /**
+         * isRoomLeader is the first person in the players list
+         */
+        isRoomLeader: false,
         /**
          * single view - board
          */
@@ -56,11 +71,22 @@ export class GameRoomPublic extends Component {
         /**
          * VOTING_RECORD tracks voting through all rounds and missions
          */
-        VOTING_RECORD: null
+        VOTING_RECORD: null,
+
+        /**
+         * TRANSCRIPT records all the actions played within the game
+         */
+        TRANSCRIPT: null
     };
 
     componentDidMount() {
+        this.onHandleInitialize();
         this.socket_event_listeners();
+        window.addEventListener('beforeunload', this.onLeaveRoom);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.onLeaveRoom); // remove the event handler for normal unmounting
     }
 
     _get_user_id = () => {
@@ -75,9 +101,9 @@ export class GameRoomPublic extends Component {
 
     socket_event_listeners = () => {
         socket.on('client_game_view_data', data => {
-            const { hasLocked, hasSetup, hasStarted, hasEnded } = data;
+            const { isValid, hasLocked, hasSetup, hasStarted, hasEnded, roomLeaderId } = data;
             const { boards, buttons, teams } = data;
-            const { PLAYERS_LIST, MISSION_TRACKER, ROUND_TRACKER, VOTING_RECORD } = data;
+            const { PLAYERS_LIST, MISSION_TRACKER, ROUND_TRACKER, VOTING_RECORD, TRANSCRIPT } = data;
 
             const user_id = this._get_user_id();
             let board = null;
@@ -92,11 +118,16 @@ export class GameRoomPublic extends Component {
             if (teams) {
                 team = teams[user_id] ? teams[user_id] : null;
             }
+            const isRoomLeader = user_id === roomLeaderId;
             this.setState({
+                isLoading: false,
+                isValid,
+                //
                 hasLocked,
                 hasSetup,
                 hasStarted,
                 hasEnded,
+                isRoomLeader,
                 // Single
                 board,
                 button,
@@ -105,12 +136,30 @@ export class GameRoomPublic extends Component {
                 PLAYERS_LIST,
                 MISSION_TRACKER,
                 ROUND_TRACKER,
-                VOTING_RECORD
+                VOTING_RECORD,
+                TRANSCRIPT
+            });
+        });
+        socket.on('client_game_invalid_or_unauthorized', () => {
+            this.setState({
+                isLoading: false
             });
         });
     };
 
-    onEnterRoom = () => {
+    onHandleInitialize() {
+        setTimeout(() => {
+            const room_id = this._get_room_id();
+            const user_id = this._get_user_id();
+            const data = {
+                room_id,
+                user_id
+            };
+            socket.emit('server_game_handle_INITIALIZE', data);
+        }, 1000);
+    }
+
+    onHandleEnter = () => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
         const user_name = this.props.auth && this.props.auth.user ? this.props.auth.user.name : null;
@@ -121,6 +170,16 @@ export class GameRoomPublic extends Component {
             user_name
         };
         socket.emit('server_game_handle_ENTER', data);
+    };
+
+    onHandleSpectate = () => {
+        const room_id = this._get_room_id();
+        const user_id = this._get_user_id();
+        const data = {
+            room_id,
+            user_id
+        };
+        socket.emit('server_game_handle_SPECTATE', data);
     };
 
     onLeaveRoom = () => {
@@ -198,10 +257,71 @@ export class GameRoomPublic extends Component {
         } else if (button === 'use_excalibur') {
             data.isExcaliburUsed = isAffirmative;
             socket.emit('server_game_handle_USE_EXCALIBUR', data);
+        } else if (button === 'confirm_excalibur') {
+            socket.emit('server_game_handle_CONFIRM_EXCALIBUR', data);
+        } else if (button === 'use_lotl') {
+            socket.emit('server_game_handle_USE_LOTL', data);
+        } else if (button === 'confirm_lotl') {
+            socket.emit('server_game_handle_CONFIRM_LOTL', data);
         }
     };
 
+    _getIsPlayerInGame = () => {
+        // If PLAYERS_LIST contains user_id
+        const { PLAYERS_LIST } = this.state;
+        if (!PLAYERS_LIST) {
+            return false;
+        }
+        const user_id = this._get_user_id();
+        const arrPlayerWithUserId = PLAYERS_LIST.filter(playerObj => {
+            return playerObj.user_id === user_id;
+        });
+        const isPlayerInGame = arrPlayerWithUserId.length > 0;
+        return isPlayerInGame;
+    };
+
+    _getRoomLeaderButton = () => {
+        const { hasLocked, hasSetup, hasStarted, isRoomLeader, PLAYERS_LIST } = this.state;
+        let roomLeaderButton = null;
+        if (isRoomLeader) {
+            const needWaitToLock = PLAYERS_LIST && PLAYERS_LIST.length < 5;
+            const needLock = !hasLocked;
+            const needSetup = hasLocked && !hasSetup;
+            const needStart = hasSetup && !hasStarted;
+            if (needLock) {
+                roomLeaderButton = (
+                    <Button
+                        className={classes.Button}
+                        block
+                        disabled={needWaitToLock}
+                        color="warning"
+                        onClick={this.onLockRoom}
+                    >
+                        Lock
+                    </Button>
+                );
+            } else if (needSetup) {
+                roomLeaderButton = (
+                    <GameSetupModal num_players={this.state.PLAYERS_LIST.length} onSetup={this.onSetup} />
+                );
+            } else if (needStart) {
+                roomLeaderButton = (
+                    <Button className={classes.Button} block color="success" onClick={this.onStart}>
+                        Start
+                    </Button>
+                );
+            }
+        }
+        return roomLeaderButton;
+    };
+
     render() {
+        // Check if loading
+        const { isLoading } = this.state;
+        if (isLoading) {
+            return <LoadingSpinner />;
+        }
+
         // Check if authenticated
         const { isAuthenticated } = this.props.auth;
         if (!isAuthenticated) {
@@ -209,69 +329,49 @@ export class GameRoomPublic extends Component {
         }
 
         // Check if valid game
-        const isValidGame = true;
-        if (!isValidGame) {
+        const { isValid } = this.state;
+        if (!isValid) {
             return <InvalidGamePage />;
         }
 
-        const welcomeMessage = <h3>{`Welcome to game room ${this._get_room_id()}`}</h3>;
+        const { PLAYERS_LIST, MISSION_TRACKER, ROUND_TRACKER, VOTING_RECORD, TRANSCRIPT } = this.state;
+        const { board, button, team } = this.state;
+        const { hasStarted } = this.state;
+        const room_id = this._get_room_id();
+        const roomLeaderButton = this._getRoomLeaderButton();
 
-        const { board, team, button } = this.state;
-        const { MISSION_TRACKER, ROUND_TRACKER } = this.state;
-        const gameBoard = this.state.hasStarted ? (
-            <GameBoard
-                onClickPlayerCard={this.onClickPlayerCard}
-                onHandleButtonClick={this.onHandleButtonClick}
-                board={board}
-                button={button}
-                team={team}
-                MISSION_TRACKER={MISSION_TRACKER}
-                ROUND_TRACKER={ROUND_TRACKER}
-            />
+        const preGameComponents = !hasStarted ? (
+            <Container>
+                {roomLeaderButton}
+                <PlayersList players_list={PLAYERS_LIST} />
+            </Container>
         ) : null;
-
-        const havePlayersJoinedRoom = !!this.state.PLAYERS_LIST;
-        const playersList =
-            havePlayersJoinedRoom && !this.state.hasStarted ? (
-                <PlayersList players_list={this.state.PLAYERS_LIST} />
-            ) : null;
-
-        // when to lock room... (only leader can lock room)
-        const haveEnoughPlayersJoinedRoom = this.state.PLAYERS_LIST && this.state.PLAYERS_LIST.length >= 5;
-        const lockRoomButton = haveEnoughPlayersJoinedRoom ? (
-            <Button color="info" onClick={this.onLockRoom}>
-                Lock
-            </Button>
-        ) : null;
-
-        // when to show modal... when enough players have joined room (5) when the game has locked
-        const gameSetupModal = havePlayersJoinedRoom ? (
-            <GameSetupModal num_players={this.state.PLAYERS_LIST.length} onSetup={this.onSetup} />
-        ) : null;
-
-        const gameNav = this.state.hasStarted ? (
-            <GameNav room_id={'1111'} voting_record={this.state.VOTING_RECORD} />
+        const gameComponents = hasStarted ? (
+            <div>
+                <GameBoard
+                    onClickPlayerCard={this.onClickPlayerCard}
+                    onHandleButtonClick={this.onHandleButtonClick}
+                    board={board}
+                    button={button}
+                    team={team}
+                    MISSION_TRACKER={MISSION_TRACKER}
+                    ROUND_TRACKER={ROUND_TRACKER}
+                />
+                <GameNav room={room_id} voting_record={VOTING_RECORD} transcript={TRANSCRIPT} />
+            </div>
         ) : null;
 
         return (
             <div>
-                <Container>{welcomeMessage}</Container>
-                <Button color="success" onClick={this.onEnterRoom}>
-                    Join
-                </Button>
-                <Button color="danger" onClick={this.onLeaveRoom}>
-                    Leave
-                </Button>
-                <Button color="warning" onClick={this.onLockRoom}>
-                    Lock
-                </Button>
-                <Button color="info" onClick={this.onStart}>
-                    Start
-                </Button>
-                {gameSetupModal}
-                {playersList}
-                {gameBoard}
-                {gameNav}
+                <GameEnterModal
+                    room={room_id}
+                    hasStarted={hasStarted}
+                    isPlayerInGame={this._getIsPlayerInGame()}
+                    onHandleEnter={this.onHandleEnter}
+                    onHandleSpectate={this.onHandleSpectate}
+                />
+                {preGameComponents}
+                {gameComponents}
             </div>
         );
     }

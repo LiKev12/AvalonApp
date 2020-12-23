@@ -74,5 +74,5 @@ const getGameButtons = props => {
         team,
         onHandleButtonClick
     };
-    return <GameButtons {...gameButtonsData} />;
+    return <GameButtons {...gameButtonsData} key={button} />;
 };

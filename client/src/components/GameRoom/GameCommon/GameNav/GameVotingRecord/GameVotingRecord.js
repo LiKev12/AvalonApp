@@ -1,13 +1,10 @@
 import React from 'react';
 import { Table } from 'reactstrap';
 
-import classes from './GameVotingRecord.module.css';
-
 const CHECKMARK = '\u2713';
 const APPROVE_COLOR = 'rgb(171, 255, 183)';
 const REJECT_COLOR = 'rgb(255, 186, 184)';
 const centerStyle = { textAlign: 'center' };
-const rightStyle = { textAlign: 'right' };
 
 const gameVotingRecord = props => {
     const { voting_record } = props;

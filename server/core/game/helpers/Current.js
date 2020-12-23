@@ -1,17 +1,19 @@
 class Current {
     constructor(num_players) {
-        console.log('new current object!');
         this.num_players = num_players;
         this.leader_idx = 0;
+        this.hammer_idx = 4 % num_players; // when is hammer updated? after a mission
         this.mission = 1;
         this.round = 1;
         this.players_selected = [];
         this.players_voted_round = [];
         this.players_voted_mission = [];
-        this.player_to_excalibur = null;
-        this.player_given_excalibur = null;
         this.player_to_assassinate = null;
-        this.selectionContext = 'mission'; // mission | assassinate | give_excalibur | use_excalibur | null
+        this.player_given_excalibur = null;
+        this.player_to_excalibur = null;
+        this.player_given_lotl = null;
+        this.all_players_given_lotl = [];
+        this.selectionContext = 'mission'; // mission | assassinate | give_excalibur | use_excalibur | use_lotl | null
     }
 
     /**
@@ -23,7 +25,9 @@ class Current {
         if (this.leader_idx === this.num_players) {
             this.leader_idx = 0;
         }
+        this.hammer_idx = (this.leader_idx + 4) % this.num_players;
         this.round = 1;
+        this.mission++;
         this.players_selected = [];
         this.players_voted_round = [];
         this.players_voted_mission = [];
@@ -34,7 +38,11 @@ class Current {
     isMissionPassed(board) {
         const num_fails_required = board[this.mission].num_fails_required;
         const num_fails = this.players_voted_mission.filter(voteObj => !voteObj.vote).length;
-        return num_fails >= num_fails_required;
+        const isMissionPassed = num_fails < num_fails_required;
+        return {
+            isMissionPassed,
+            num_fails
+        };
     }
 
     hasEveryPlayerVotedMission(board) {
@@ -147,6 +155,37 @@ class Current {
                 voteObj.vote = !vote;
             }
         });
+    }
+
+    getTargetPlayerMissionVote(target_user_id) {
+        let targetPlayerMissionVote = false;
+        this.players_voted_mission.forEach(voteObj => {
+            const { user_id, vote } = voteObj;
+            if (user_id === target_user_id) {
+                targetPlayerMissionVote = vote;
+            }
+        });
+        return targetPlayerMissionVote;
+    }
+
+    /**
+     * LOTL
+     */
+
+    setPlayerToLOTL(target_user_id) {
+        this.player_to_lotl = target_user_id;
+    }
+
+    setPlayerGivenLOTL(target_user_id) {
+        this.player_given_lotl = target_user_id;
+    }
+
+    updatePlayersGivenLOTL(target_user_id) {
+        this.all_players_given_lotl.push(target_user_id);
+    }
+
+    hasPlayerHadLOTLBefore(target_user_id) {
+        return this.all_players_given_lotl.includes(target_user_id);
     }
 
     /**

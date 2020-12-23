@@ -11,9 +11,11 @@ import { connect } from 'react-redux';
 
 const DEFAULT_STATE = {
     modal: false,
+    buttonDisabled: false,
     room_id: '0',
     room_pwd: '0',
     is_public: true,
+    is_rated: false,
     isCreated: false,
     success_msg: null
 };
@@ -29,9 +31,15 @@ export class LobbyModal extends Component {
         });
     };
 
-    handleClickSetting = is_public => {
+    handleClickPublic = is_public => {
         this.setState({
             is_public
+        });
+    };
+
+    handleClickRated = is_rated => {
+        this.setState({
+            is_rated
         });
     };
 
@@ -49,14 +57,16 @@ export class LobbyModal extends Component {
 
     onSubmit = e => {
         e.preventDefault();
+        this.setState({
+            buttonDisabled: true
+        });
         axios.get('/api/rooms').then(res => {
-            const unavailable_room_ids = res.data.map(roomObject => roomObject.room_id);
-            const room_id = this.generateRoomID(unavailable_room_ids);
-
+            const room_id = res.data;
             // Add to database
             this.props.addRoomWithoutDispatch({
                 room_id,
-                is_public: this.state.is_public
+                is_public: this.state.is_public,
+                is_rated: this.state.is_rated
             });
 
             // Set state to show isCreated
@@ -71,7 +81,8 @@ export class LobbyModal extends Component {
             const data = {
                 room_id,
                 user_id,
-                is_public: this.state.is_public
+                is_public: this.state.is_public,
+                is_rated: this.state.is_rated
             };
             socket.emit('server_game_handle_CREATE', data);
         });
@@ -86,11 +97,9 @@ export class LobbyModal extends Component {
         return (
             <div>
                 {createRoomButton}
-                <Button onClick={this.handleManualButton}>Test</Button>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                     <ModalHeader toggle={this.toggle}>Create a Room</ModalHeader>
                     <ModalBody>
-                        <Label for="role_selection">Public or Private:</Label>
                         <Form onSubmit={this.onSubmit}>
                             <FormGroup check>
                                 <Label check>
@@ -98,7 +107,7 @@ export class LobbyModal extends Component {
                                         checked={this.state.is_public}
                                         type="radio"
                                         name="radio_public_private"
-                                        onClick={() => this.handleClickSetting(true)}
+                                        onClick={() => this.handleClickPublic(true)}
                                     />
                                     Public
                                 </Label>
@@ -109,17 +118,40 @@ export class LobbyModal extends Component {
                                         checked={!this.state.is_public}
                                         type="radio"
                                         name="radio_public_private"
-                                        onClick={() => this.handleClickSetting(false)}
+                                        onClick={() => this.handleClickPublic(false)}
                                         disabled
                                     />
                                     Private
                                 </Label>
                             </FormGroup>
+                            <hr />
+                            <FormGroup check>
+                                <Label check>
+                                    <Input
+                                        checked={!this.state.is_rated}
+                                        type="radio"
+                                        name="radio_rated_unrated"
+                                        onClick={() => this.handleClickRated(false)}
+                                    />
+                                    Unrated
+                                </Label>
+                            </FormGroup>
+                            <FormGroup check>
+                                <Label check>
+                                    <Input
+                                        checked={this.state.is_rated}
+                                        type="radio"
+                                        name="radio_rated_unrated"
+                                        onClick={() => this.handleClickRated(true)}
+                                    />
+                                    Rated
+                                </Label>
+                            </FormGroup>
                             <Button
                                 color="dark"
-                                className={classes.CreateRoomModalButton}
                                 block
-                                disabled={this.state.isCreated}
+                                disabled={this.state.buttonDisabled}
+                                className={classes.CreateRoomModalButton}
                             >
                                 Create Room
                             </Button>
@@ -129,7 +161,6 @@ export class LobbyModal extends Component {
                                     {this.state.success_msg}
                                 </Alert>
                             ) : null}
-
                             {this.state.isCreated && this.state.is_public && (
                                 <Link to={`/game/${this.state.room_id}`}>
                                     <Button color="success" style={{ marginTop: '2rem' }} block>
@@ -137,7 +168,6 @@ export class LobbyModal extends Component {
                                     </Button>
                                 </Link>
                             )}
-
                             {this.state.isCreated && !this.state.is_public && (
                                 <Link to={`/game/${this.state.room_id}/pwd/${this.state.game_pwd}`}>
                                     <Button color="success" style={{ marginTop: '2rem' }} block>

@@ -18,9 +18,9 @@ class Avalon {
         return this.games_record.get(room_id);
     }
 
-    createGame(room_id, setting) {
+    createGame(room_id, is_public, is_rated) {
         if (!this.games_record.has(room_id)) {
-            this.games_record.set(room_id, new Game(room_id, setting));
+            this.games_record.set(room_id, new Game(room_id, is_public, is_rated));
         }
     }
 

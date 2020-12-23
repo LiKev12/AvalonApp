@@ -15,25 +15,26 @@ router.post('/', (req, res) => {
 
     // Simple validation
     if (!name || !email || !password) {
-        console.log('Please enter all fields');
         return res.status(400).json({ msg: 'Please enter all fields' });
     }
 
     if (name.length < 4) {
-        console.log('Username must contain at least 4 characters');
         return res.status(400).json({ msg: 'Username must contain at least 4 characters' });
     }
 
     if (!RegExp('^[a-zA-Z0-9-_]+$').test(name)) {
-        console.log('Username must be alphanumeric, can include dashes and underscores');
         return res.status(400).json({ msg: 'Username must be alphanumeric, can include dashes and underscores' });
     }
 
-    // Check for existing user
-    User.findOne({ email }).then(user => {
+    // Check for existing user with either same username or email
+    User.findOne({ $or: [{ name }, { email }] }).then(user => {
         if (user) {
-            console.log('User already exists');
-            return res.status(400).json({ msg: 'User already exists' });
+            const { name: existingName, email: existingEmail } = user;
+            if (name === existingName) {
+                return res.status(400).json({ msg: 'User already exists with that username' });
+            } else if (email === existingEmail) {
+                return res.status(400).json({ msg: 'User already exists with that email' });
+            }
         }
         const newUser = new User({
             name,

@@ -23,7 +23,6 @@ class LobbyPage extends Component {
     }
 
     render() {
-        console.log(this.state.lobby_data);
         const chatHeader = (
             <div>
                 <hr></hr>

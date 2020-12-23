@@ -1,9 +1,10 @@
 import React from 'react';
-
 import classes from './WelcomePage.module.css';
 
 import { mockGameBoardData } from '../../Mocks/MockGameBoard';
 import GameBoard from '../../GameRoom/GameBoard/GameBoard';
+import LoadingSpinner from '../Loading/LoadingSpinner';
+
 const welcomePage = () => {
     return (
         // <div className={classes.WelcomePage}>
@@ -21,7 +22,9 @@ const welcomePage = () => {
         //     </div>
         // </div>
         <div>
+            {/* <GameEnterModal /> */}
             <GameBoard {...mockGameBoardData} />
+            {/* <LoadingSpinner /> */}
         </div>
     );
 };

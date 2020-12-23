@@ -29,3 +29,13 @@
     background-position: center;
     background-size: 55px;
 }
+
+.MissionTrackerText {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.MissionTrackerSubtext {
+    color: #c0c0c0;
+}
