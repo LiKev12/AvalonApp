@@ -27,12 +27,21 @@ router.get('/', (req, res) => {
  * @desc    Saves completed game to database
  * @access  Private
  */
-router.post('/', auth, (req, res) => {
+router.post('/', (req, res) => {
     const newGame = new Game({
-        metadata: req.body.metadata,
-        history: req.body.history,
+        room_id: req.body.room_id,
+        is_public: req.body.is_public,
+        is_rated: req.body.is_rated,
+        //
+        creation_time: req.body.creation_time,
+        start_time: req.body.start_time,
+        end_time: req.body.end_time,
+        is_completed: req.body.is_completed,
+        //
         players: req.body.players,
-        result: req.body.result
+        result: req.body.result,
+        metadata: req.body.metadata,
+        history: req.body.history
     });
     newGame.save().then(game => res.json(game));
 });
@@ -48,7 +57,6 @@ router.get('/:user_id', auth, (req, res) => {
     Game.find({ players: { $elemMatch: { user_id: user_id } } })
         .sort({ date: -1 })
         .then(games => {
-            // const games_data = res.json(games);
             const data_to_be_sent = games.map(single_game => {
                 const {
                     date,

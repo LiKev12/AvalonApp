@@ -25,13 +25,11 @@ class Avalon {
     }
 
     getLobbyData() {
-        // Iterate and get all games that haven't ended yet
+        // Iterate and get all games (including those that finished)
         const allGameLobbyData = [];
         Array.from(this.games_record.values()).forEach(game => {
             const gameLobbyData = game.getLobbyData();
-            if (!game.hasGameEnded()) {
-                allGameLobbyData.push(gameLobbyData);
-            }
+            allGameLobbyData.push(gameLobbyData);
         });
 
         // Sort by creation date

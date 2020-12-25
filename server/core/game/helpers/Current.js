@@ -116,11 +116,7 @@ class Current {
      */
 
     setPlayerToAssassinate(target_user_id) {
-        if (this.player_to_assassinate === target_user_id) {
-            this.player_to_assassinate = null;
-        } else {
-            this.player_to_assassinate = target_user_id;
-        }
+        this.player_to_assassinate = target_user_id;
     }
 
     /**
@@ -128,14 +124,11 @@ class Current {
      */
 
     setPlayerGivenExcalibur(target_user_id) {
-        if (this.player_given_excalibur === target_user_id) {
-            this.player_given_excalibur = null;
-        } else {
-            this.player_given_excalibur = target_user_id;
-        }
+        this.player_given_excalibur = target_user_id;
     }
 
     setPlayerToExcalibur(target_user_id) {
+        // Must allow unselect because player can skip excalibur
         if (this.player_to_excalibur === target_user_id) {
             this.player_to_excalibur = null;
         } else {

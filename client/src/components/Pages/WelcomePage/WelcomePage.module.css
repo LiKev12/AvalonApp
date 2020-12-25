@@ -1,9 +1,4 @@
-.WelcomePage {
-    /* background: url('../avatars/CastleFire.png');
-    background-repeat: no-repeat;
-    background-position: center; */
-    /* background-size: 100%; */
-
+.OuterContainer {
     background: #ece9e6; /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #ffffff, #ece9e6); /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(
@@ -11,21 +6,22 @@
         #ffffff,
         #ece9e6
     ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
     width: 100%;
     height: 100vh;
+    background-size: cover;
     color: white;
 }
 
 .InnerContainer {
     text-align: center;
     font-size: 30px;
+    margin: auto;
 }
 
 .InnerText {
     width: 50%;
     margin: 0 auto;
-    background: black;
+    background: #212529;
     border: 4px solid grey;
     border-radius: 8px;
     padding: 20px;

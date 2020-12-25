@@ -3,13 +3,18 @@ const Current = require('./helpers/Current');
 const History = require('./helpers/History');
 const View = require('./helpers/View');
 const ResourceBoards = require('./resources/Boards');
+const fetch = require('node-fetch');
 
 class Game {
     constructor(room_id, is_public, is_rated) {
         this.room_id = room_id;
         this.is_public = is_public;
         this.is_rated = is_rated;
+        //
         this.creation_time = Date.now();
+        this.start_time = null;
+        this.end_time = null;
+        this.is_completed = false;
         //
         this.metadata = new Metadata();
         this.view = new View();
@@ -63,6 +68,7 @@ class Game {
     }
 
     handleStart() {
+        this.start_time = Date.now();
         this.metadata.handleStart();
     }
 
@@ -102,14 +108,17 @@ class Game {
             if (isUserAssassinPerformer) {
                 const { map_idx_to_id } = this.metadata.get();
                 const target_user_id = map_idx_to_id[target_idx];
-                this.current.setPlayerToAssassinate(target_user_id);
-                const { player_to_assassinate } = this.current.get();
-                const isAnyPlayerChosenToAssassinate = !!player_to_assassinate;
-                this.view.togglePlayerToAssassinate(target_idx, isAnyPlayerChosenToAssassinate);
-                if (isAnyPlayerChosenToAssassinate) {
-                    this.view.setButton(user_id, 'assassinate');
-                } else {
-                    this.view.unsetButton(user_id);
+                const isSelf = target_user_id === user_id;
+                if (!isSelf) {
+                    this.current.setPlayerToAssassinate(target_user_id);
+                    const { player_to_assassinate } = this.current.get();
+                    const isAnyPlayerChosenToAssassinate = !!player_to_assassinate;
+                    this.view.togglePlayerToAssassinate(target_idx, isAnyPlayerChosenToAssassinate);
+                    if (isAnyPlayerChosenToAssassinate) {
+                        this.view.setButton(user_id, 'assassinate');
+                    } else {
+                        this.view.unsetButton(user_id);
+                    }
                 }
             }
         } else if (selectionContext === 'give_excalibur') {
@@ -511,6 +520,37 @@ class Game {
         this.current.setSelectionContext(null);
         const { ordered_players } = this.metadata.get();
         this.view.reveal_boards(ordered_players);
+        this.end_time = Date.now();
+        this.is_completed = true;
+        this.sendFinishedGameToDatabase();
+    }
+
+    sendFinishedGameToDatabase() {
+        const { players } = this.metadata.get();
+        const { result } = this.history.get();
+        const finalData = {
+            room_id: this.room_id,
+            is_public: this.is_public,
+            is_rated: this.is_rated,
+            //
+            creation_time: this.creation_time,
+            start_time: this.start_time,
+            end_time: this.end_time,
+            is_completed: this.is_completed,
+            //
+            metadata: this.metadata.get(),
+            history: this.history.get(),
+            players,
+            result
+        };
+        fetch('http://localhost:5000/api/games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(finalData)
+        })
+            .then(res => res.json())
+            .then(data => console.log(data))
+            .catch(err => console.log('Error', err));
     }
 
     hasGameEnded() {
@@ -521,12 +561,13 @@ class Game {
     getLobbyData() {
         const metadata = this.metadata.get();
         const { hasStarted, hasEnded, hasLocked, players } = metadata;
-        const { room_id, is_public, creation_time } = this;
+        const { room_id, is_public, is_rated, creation_time } = this;
 
         const num_players = players.length;
         return {
             room_id,
             is_public,
+            is_rated,
             creation_time,
             hasStarted,
             hasEnded,

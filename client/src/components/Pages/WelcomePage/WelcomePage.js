@@ -1,32 +1,23 @@
 import React from 'react';
 import classes from './WelcomePage.module.css';
 
-import { mockGameBoardData } from '../../Mocks/MockGameBoard';
-import GameBoard from '../../GameRoom/GameBoard/GameBoard';
-import LoadingSpinner from '../Loading/LoadingSpinner';
-
-const welcomePage = () => {
+const WelcomePage = () => {
     return (
-        // <div className={classes.WelcomePage}>
-        //     <div className={classes.InnerContainer}>
-        //         <br></br>
-        //         <br></br>
-        //         <br></br>
-        //         <br></br>
-        //         <br></br>
-        //         <div className={classes.InnerText}>
-        //             Welcome to The Resistance: Avalon.
-        //             <br></br>
-        //             <div className={classes.SubText}>Please register and log in to play.</div>
-        //         </div>
-        //     </div>
-        // </div>
-        <div>
-            {/* <GameEnterModal /> */}
-            <GameBoard {...mockGameBoardData} />
-            {/* <LoadingSpinner /> */}
+        <div className={classes.OuterContainer}>
+            <div className={classes.InnerContainer}>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <br></br>
+                <div className={classes.InnerText}>
+                    Welcome to The Resistance: Avalon
+                    <br></br>
+                    <div className={classes.SubText}>Please register and log in to play</div>
+                </div>
+            </div>
         </div>
     );
 };
 
-export default welcomePage;
+export default WelcomePage;

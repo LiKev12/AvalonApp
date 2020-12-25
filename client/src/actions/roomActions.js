@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_ROOM_IDS, ADD_ROOM_ID } from './types';
+import { GET_ROOM_IDS } from './types';
 import { returnErrors } from './errorActions';
 import { tokenConfig } from './authActions';
 

@@ -1,17 +1,18 @@
 import React from 'react';
 import classes from './PlayerCard.module.css';
 import PropTypes from 'prop-types';
-
-import Assassin from '../../../../media/RoleAvatars/Assassin.png';
-import DrunkMerlin from '../../../../media/RoleAvatars/DrunkMerlin.png';
-import LoyalServant from '../../../../media/RoleAvatars/LoyalServant.png';
-import Percival from '../../../../media/RoleAvatars/Percival.png';
-import Merlin from '../../../../media/RoleAvatars/Merlin.png';
-import Minion from '../../../../media/RoleAvatars/Minion.png';
-import Mordred from '../../../../media/RoleAvatars/Mordred.png';
-import Morgana from '../../../../media/RoleAvatars/Morgana.png';
-import Oberon from '../../../../media/RoleAvatars/Oberon.png';
-import Unknown from '../../../../media/RoleAvatars/Unknown.png';
+import {
+    Assassin,
+    DrunkMerlin,
+    LoyalServant,
+    Merlin,
+    Minion,
+    Mordred,
+    Morgana,
+    Oberon,
+    Percival,
+    Unknown
+} from '../../../../media/RoleAvatars';
 
 const playerCard = props => {
     const { player, player_idx, total_num_players, onClickPlayerCard, button } = props;

@@ -1,5 +1,55 @@
-import React from 'react';
+import React, { Fragment } from 'react';
+import classes from './RulesPage.module.css';
+import { Container } from 'reactstrap';
+import CharacterCards from './CharacterCards/CharacterCards';
+import FeatureCards from './FeatureCards/FeatureCards';
 
-export default function RulesPage() {
-    return <div>Rules</div>;
-}
+const RulesPage = () => {
+    return (
+        <div className={classes.AboutPage}>
+            <Container>
+                {charactersSection}
+                {featuresSection}
+                {rulesSection}
+            </Container>
+        </div>
+    );
+};
+
+export default RulesPage;
+
+const charactersSection = (
+    <Fragment>
+        <hr />
+        <h3>Characters</h3>
+        <hr />
+        <CharacterCards />
+    </Fragment>
+);
+
+const featuresSection = (
+    <Fragment>
+        <hr />
+        <h3>Features</h3>
+        <hr />
+        <FeatureCards />
+    </Fragment>
+);
+
+const rulesSection = (
+    <Fragment>
+        <hr />
+        <h3>Rules</h3>
+        <hr />
+        <p>The rules of Avalon are explained nicely in this video here:</p>
+        <div className={classes.RulesVideoContainer}>
+            <iframe
+                title="The Resistance: Avalon - How To Play"
+                className="mb-3 mt-3 "
+                width="625"
+                height="400"
+                src="https://www.youtube.com/embed/rXlK3NZjLGc"
+            ></iframe>
+        </div>
+    </Fragment>
+);
