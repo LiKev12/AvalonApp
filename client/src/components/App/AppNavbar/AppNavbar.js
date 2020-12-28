@@ -2,31 +2,16 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavLink, NavItem, Container } from 'reactstrap';
-import RegisterModal from '../../Auth/RegisterModal';
-import LoginModal from '../../Auth/LoginModal';
-
+import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, Container } from 'reactstrap';
 import { HomeLink, AboutLink, RulesLink, StatsLink } from './NavLinks/NavLinks';
+import LoginModal from '../../Auth/LoginModal';
 import LogoutLink from './NavLinks/LogoutLink';
-import { socket } from '../../../service/socket';
+import RegisterModal from '../../Auth/RegisterModal';
 
 class AppNavbar extends Component {
     state = {
         isOpen: false
     };
-
-    // DELETE LATER----------------
-    componentDidMount() {
-        socket.on('testbuttonclient', data => {
-            console.log('server data', data);
-        });
-    }
-
-    handleTestButton = () => {
-        socket.emit('testbuttonserver');
-    };
-
-    // ---------------------------------------
 
     toggle = () => {
         this.setState({
@@ -48,9 +33,6 @@ class AppNavbar extends Component {
                 </NavItem>
                 <NavItem>
                     <RulesLink />
-                </NavItem>
-                <NavItem>
-                    <NavLink onClick={this.handleTestButton}>Test</NavLink>
                 </NavItem>
             </Fragment>
         );

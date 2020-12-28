@@ -6,8 +6,9 @@ const ResourceBoards = require('./resources/Boards');
 const fetch = require('node-fetch');
 
 class Game {
-    constructor(room_id, is_public, is_rated) {
+    constructor(room_id, room_pwd, is_public, is_rated) {
         this.room_id = room_id;
+        this.room_pwd = room_pwd;
         this.is_public = is_public;
         this.is_rated = is_rated;
         //
@@ -20,6 +21,14 @@ class Game {
         this.view = new View();
         this.history = null;
         this.current = null;
+    }
+
+    isValid(room_pwd) {
+        if (this.is_public) {
+            return true;
+        } else {
+            return room_pwd === this.room_pwd;
+        }
     }
 
     /**
@@ -522,26 +531,101 @@ class Game {
         this.view.reveal_boards(ordered_players);
         this.end_time = Date.now();
         this.is_completed = true;
-        this.sendFinishedGameToDatabase();
+        this._sendFinishedGameToDatabase();
+        if (this.is_rated) {
+            this._updateRatingsAndSendToDatabase();
+        }
     }
 
-    sendFinishedGameToDatabase() {
+    hasGameEnded() {
+        const { hasEnded } = this.metadata.get();
+        return hasEnded;
+    }
+
+    cleanUpExpiredAfterCreation() {
+        if (!this.start_time) {
+            this.start_time = Date.now();
+        }
+        this.end_time = Date.now();
+        this._sendUnfinishedGameToDatabase();
+
+        if (this.is_rated) {
+            // Punish everyone for abandoned rated game
+            this._updateRatingsAndSendToDatabase();
+        }
+    }
+
+    _sendFinishedGameToDatabase() {
         const { players } = this.metadata.get();
         const { result } = this.history.get();
-        const finalData = {
-            room_id: this.room_id,
-            is_public: this.is_public,
-            is_rated: this.is_rated,
+        this._sendGameToDatabase(
+            this.room_id,
+            this.is_public,
+            this.is_rated,
             //
-            creation_time: this.creation_time,
-            start_time: this.start_time,
-            end_time: this.end_time,
-            is_completed: this.is_completed,
+            this.creation_time,
+            this.start_time,
+            this.end_time,
+            this.is_completed,
             //
-            metadata: this.metadata.get(),
-            history: this.history.get(),
             players,
-            result
+            result,
+            this.metadata.get(),
+            this.history.get()
+        );
+    }
+
+    _sendUnfinishedGameToDatabase() {
+        const { players } = this.metadata.get();
+        let history = {};
+        let result = {};
+        if (this.history) {
+            history = this.history.get();
+            result = this.history.get()['result'];
+        }
+        this._sendGameToDatabase(
+            this.room_id,
+            this.is_public,
+            this.is_rated,
+            this.creation_time,
+            this.start_time,
+            this.end_time,
+            this.is_completed,
+            players,
+            result,
+            this.metadata.get(),
+            history
+        );
+    }
+
+    _sendGameToDatabase(
+        room_id,
+        is_public,
+        is_rated,
+        creation_time,
+        start_time,
+        end_time,
+        is_completed,
+        players,
+        result,
+        metadata,
+        history
+    ) {
+        const finalData = {
+            room_id,
+            is_public,
+            is_rated,
+            //
+            creation_time,
+            start_time,
+            end_time,
+            is_completed,
+            //
+            players,
+            result,
+            //
+            metadata,
+            history
         };
         fetch('http://localhost:5000/api/games', {
             method: 'POST',
@@ -549,13 +633,103 @@ class Game {
             body: JSON.stringify(finalData)
         })
             .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.log('Error', err));
+            .then(data => console.log('[/api/games]', data))
+            .catch(err => console.log('[/api/games] Error', err));
     }
 
-    hasGameEnded() {
-        const { hasEnded } = this.metadata.get();
-        return hasEnded;
+    /**
+     * 1) Get all initial ratings of each player in game
+     * 2) Calculate the avg resistance and avg spy ratings
+     * 3) Use avg resistance and spy ratings to calculate probability resistance wins
+     * 4) Use rating update formula to update the individual ratings of each player
+     * 5) Send new ratings for each player to database
+     */
+    _updateRatingsAndSendToDatabase() {
+        const { ordered_ids } = this.metadata.get();
+        fetch('http://localhost:5000/api/ratings/getInitialRatings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ordered_ids)
+        })
+            .then(res => res.json())
+            .then(map_id_to_rating_initial => {
+                const map_id_to_rating_new = this._getNewRatingsFromInitial(map_id_to_rating_initial);
+                const setNewRatingsData = {
+                    arr_user_ids: ordered_ids,
+                    map_id_to_rating_new
+                };
+                fetch('http://localhost:5000/api/ratings/setNewRatings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(setNewRatingsData)
+                })
+                    .then(res => res.json())
+                    .then(data => console.log('[/api/ratings/setNewRatings]', data))
+                    .catch(err => console.log('[/api/ratings/setNewRatings] Error', err));
+            })
+            .catch(err => console.log('[api/ratings/getInitialRatingsError] Error', err));
+    }
+
+    _getNewRatingsFromInitial(map_id_to_rating_initial) {
+        const { ordered_players } = this.metadata.get();
+        if (!this.is_completed) {
+            // Punish everyone for abandoned rated game
+            const map_id_to_rating_new = {};
+            ordered_players.forEach(playerObj => {
+                const { user_id } = playerObj;
+                map_id_to_rating_new[user_id] = map_id_to_rating_initial[user_id] - 32;
+            });
+            return map_id_to_rating_new;
+        }
+
+        // Separate players into Resistance/Spy teams
+        const resistanceTeamIDs = [];
+        const spyTeamIds = [];
+        ordered_players.forEach(playerObj => {
+            const { user_id, team } = playerObj;
+            if (team === 'RESISTANCE') {
+                resistanceTeamIDs.push(user_id);
+            } else if (team === 'SPY') {
+                spyTeamIds.push(user_id);
+            }
+        });
+        const numResistancePlayers = resistanceTeamIDs.length;
+        const numSpyPlayers = spyTeamIds.length;
+
+        // Calculate R0_avg_resistance and R0_avg_spy
+        let R0_avg_resistance = 0;
+        let R0_avg_spy = 0;
+        resistanceTeamIDs.forEach(user_id => {
+            R0_avg_resistance += map_id_to_rating_initial[user_id];
+        });
+        R0_avg_resistance /= numResistancePlayers;
+        spyTeamIds.forEach(user_id => {
+            R0_avg_spy += map_id_to_rating_initial[user_id];
+        });
+        R0_avg_spy /= numSpyPlayers;
+
+        // Calculate expected probability team Resistance wins (P_resistance_wins)
+        const P_resistance_win = 1 / (1 + Math.pow(10, (R0_avg_spy - R0_avg_resistance) / 400));
+        const P_spy_win = 1 - P_resistance_win;
+
+        // Calculate new ratings
+        const { result } = this.history.get();
+        const actual_resistance_score = result.winningTeam === 'RESISTANCE' ? 1 : 0;
+        const actual_spy_score = 1 - actual_resistance_score;
+        const map_id_to_rating_new = {};
+        // Calculate new ratings of individual players on resistance team
+        resistanceTeamIDs.forEach(user_id => {
+            const newRating = Math.round(
+                map_id_to_rating_initial[user_id] + 32 * (actual_resistance_score - P_resistance_win)
+            );
+            map_id_to_rating_new[user_id] = newRating;
+        });
+        // Calculate new ratings of individual players on spy team
+        spyTeamIds.forEach(user_id => {
+            const newRating = Math.round(map_id_to_rating_initial[user_id] + 32 * (actual_spy_score - P_spy_win));
+            map_id_to_rating_new[user_id] = newRating;
+        });
+        return map_id_to_rating_new;
     }
 
     getLobbyData() {
@@ -578,6 +752,10 @@ class Game {
 
     getViewData() {
         return this.view.get(this.metadata);
+    }
+
+    get() {
+        return this;
     }
 }
 

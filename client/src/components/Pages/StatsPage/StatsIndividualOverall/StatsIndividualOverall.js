@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table } from 'reactstrap';
+import classes from './StatsIndividualOverall.module.css';
 
 const COLOR_BLUE = { color: '#7EC8E3' };
 const COLOR_GREEN = { color: '#90ee90' };
@@ -25,18 +26,20 @@ const StatsIndividualOverall = props => {
     const tableBody = overall && overall.length > 0 ? getTableBodyRows(overall) : placeholderRow;
 
     const overallTable = (
-        <Table dark>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>Games Won</th>
-                    <th>Games Played</th>
-                    <th>Win %</th>
-                </tr>
-            </thead>
-            <tbody>{tableBody}</tbody>
-        </Table>
+        <div className={classes.TableContainer}>
+            <Table dark>
+                <thead>
+                    <tr>
+                        <th className={classes.CellCenterText}>#</th>
+                        <th className={classes.CellCenterText}>Team</th>
+                        <th className={classes.CellCenterText}>Games Won</th>
+                        <th className={classes.CellCenterText}>Games Played</th>
+                        <th className={classes.CellCenterText}>Win %</th>
+                    </tr>
+                </thead>
+                <tbody>{tableBody}</tbody>
+            </Table>
+        </div>
     );
     return <div>{overallTable}</div>;
 };
@@ -57,11 +60,13 @@ const getTableBodyRows = overall => {
         const colorTeam = map_team_to_color[team];
         return (
             <tr key={idx + 1}>
-                <td>{idx + 1}</td>
-                <td style={colorTeam}>{team}</td>
-                <td>{games_won}</td>
-                <td>{games_played}</td>
-                <td>{win_percentage}</td>
+                <td className={classes.CellCenterText}>{idx + 1}</td>
+                <td className={classes.CellCenterText} style={colorTeam}>
+                    {team}
+                </td>
+                <td className={classes.CellCenterText}>{games_won}</td>
+                <td className={classes.CellCenterText}>{games_played}</td>
+                <td className={classes.CellCenterText}>{win_percentage}</td>
             </tr>
         );
     });

@@ -1,3 +1,12 @@
 .LobbyTableCell {
     text-align: center;
 }
+
+.LobbyTableButton {
+    width: '100px';
+}
+
+.TableContainer {
+    max-height: 300px;
+    overflow-y: auto;
+}

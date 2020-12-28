@@ -10,7 +10,7 @@ class History {
 
         this.summary = this._init_summary(board);
         this.result = {
-            winningTeam: null,
+            winningTeam: null, // CHANGE BACK LATER AFTER TESTING
             winningFactor: null // byAutoLoss, byAssassin, byMissions
         };
     }

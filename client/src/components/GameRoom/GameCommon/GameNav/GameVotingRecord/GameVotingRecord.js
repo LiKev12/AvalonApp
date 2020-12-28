@@ -33,7 +33,7 @@ const getTableHeaders = () => {
 
     order.forEach(missionNumber => {
         missionHeader.push(
-            <th colspan={5} style={centerStyle}>
+            <th colSpan={5} style={centerStyle}>
                 {missionNumber}
             </th>
         );

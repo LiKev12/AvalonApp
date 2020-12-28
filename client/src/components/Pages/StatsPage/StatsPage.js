@@ -1,41 +1,85 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import classes from './StatsPage.module.css';
+import PropTypes from 'prop-types';
 
+import axios from 'axios';
+import { connect } from 'react-redux';
 import { Container } from 'reactstrap';
+
+import AccessDeniedPage from '../AccessDeniedPage/AccessDeniedPage';
+import LoadingSpinner from '../Loading/LoadingSpinner';
 import StatsIndividualHistory from './StatsIndividualHistory/StatsIndividualHistory';
 import StatsIndividualOverall from './StatsIndividualOverall/StatsIndividualOverall';
 import StatsIndividualByRoles from './StatsIndividualByRoles/StatsIndividualByRoles';
 
 export class StatsPage extends Component {
     state = {
+        isAuthenticated: false,
+        isLoadingRating: true,
+        isLoadingStats: true,
+        rating: null,
         history: null,
         overall: null,
         byRoles: null
     };
 
     componentDidMount() {
-        // Get individual stats data and set state accordingly
-        axios.get(`/api/mock_games/id1`).then(res => {
-            /**
-             * [{date, team, role, num_players, result}]
-             */
-            const data = res.data;
-            const history = _getHistoryData(data);
-            const overall = _getOverallData(data);
-            const byRoles = _getByRolesData(data);
-            this.setState({
-                history,
-                overall,
-                byRoles
-            });
-        });
+        setTimeout(() => {
+            // Get individual stats data and set state accordingly
+            const user_id = this._get_user_id();
+            if (!!user_id) {
+                axios.get(`/api/ratings/${user_id}`).then(res => {
+                    const rating = res.data;
+                    this.setState({
+                        isLoadingRating: false,
+                        rating
+                    });
+                });
+                axios.get(`/api/games/${user_id}`).then(res => {
+                    /**
+                     * [{date, is_completed, is_public, is_rated, num_players, team, role, result}]
+                     */
+                    const data = res.data;
+                    const history = _getHistoryData(data);
+                    const overall = _getOverallData(data);
+                    const byRoles = _getByRolesData(data);
+                    this.setState({
+                        isAuthenticated: true,
+                        isLoadingStats: false,
+                        history,
+                        overall,
+                        byRoles
+                    });
+                });
+            } else {
+                this.setState({
+                    isLoadingRating: false,
+                    isLoadingStats: false
+                });
+            }
+        }, 2000);
     }
 
+    _get_user_id = () => {
+        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
+        return user_id;
+    };
+
     render() {
-        const { history, overall, byRoles } = this.state;
+        const { isAuthenticated, isLoadingRating, isLoadingStats, rating, history, overall, byRoles } = this.state;
+
+        if (isLoadingRating || isLoadingStats) {
+            return <LoadingSpinner />;
+        }
+
+        if (!isAuthenticated) {
+            return <AccessDeniedPage />;
+        }
+
         return (
             <div>
                 <Container>
+                    <div className={classes.RatingBanner}>Rating: {rating ? rating : 1500}</div>
                     <hr />
                     <h3>History</h3>
                     <hr />
@@ -54,12 +98,19 @@ export class StatsPage extends Component {
     }
 }
 
-export default StatsPage;
+StatsPage.propTypes = {
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, null)(StatsPage);
 
 const _getHistoryData = data => {
-    // Get top 5
-    const arrMaxLen = Math.min(data.length, 5);
-    return data.slice(0, arrMaxLen);
+    // Get all (previously just top 5, but now table is scrollable)
+    return data;
 };
 
 const _getOverallData = data => {
@@ -71,14 +122,18 @@ const _getOverallData = data => {
     let SPY_GAMES_PLAYED = 0;
 
     data.forEach(singleGameData => {
-        const { team, result } = singleGameData;
+        const {
+            team,
+            result: { winningTeam }
+        } = singleGameData;
+        const resultText = team === winningTeam ? 'WIN' : 'LOSS';
         if (team === 'RESISTANCE') {
-            if (result === 'WIN') {
+            if (resultText === 'WIN') {
                 RESISTANCE_GAMES_WON++;
             }
             RESISTANCE_GAMES_PLAYED++;
         } else if (team === 'SPY') {
-            if (result === 'WIN') {
+            if (resultText === 'WIN') {
                 SPY_GAMES_WON++;
             }
             SPY_GAMES_PLAYED++;
@@ -100,14 +155,19 @@ const _getByRolesData = data => {
     const mapRoleToGamesPlayed = new Map();
 
     data.forEach(singleGameData => {
-        const { role, team, result } = singleGameData;
+        const {
+            role,
+            team,
+            result: { winningTeam }
+        } = singleGameData;
+        const resultText = team === winningTeam ? 'WIN' : 'LOSS';
         if (!setOfUniqueRoles.has(role)) {
             setOfUniqueRoles.add(role);
             uniqueRolesAndTeams.push({ role, team });
-            mapRoleToGamesWon.set(role, result === 'WIN' ? 1 : 0);
+            mapRoleToGamesWon.set(role, resultText === 'WIN' ? 1 : 0);
             mapRoleToGamesPlayed.set(role, 1);
         } else {
-            if (result === 'WIN') {
+            if (resultText === 'WIN') {
                 // Increment games_won
                 const games_won = mapRoleToGamesWon.get(role);
                 mapRoleToGamesWon.set(role, games_won + 1);

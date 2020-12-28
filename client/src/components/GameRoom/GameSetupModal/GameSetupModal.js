@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classes from './GameSetupModal.module.css';
 import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, CustomInput, Alert } from 'reactstrap';
+import { isRolesValid, isFeaturesValid } from './GameSetupValidator/GameSetupValidator';
 
 class GameSetupModal extends Component {
     state = {
@@ -13,8 +14,8 @@ class GameSetupModal extends Component {
             Assassin: true,
             Percival: true,
             Morgana: true,
-            Oberon: false,
             Mordred: false,
+            Oberon: false,
             Minion: false,
             DrunkMerlin: false
         },
@@ -63,15 +64,25 @@ class GameSetupModal extends Component {
 
     onSubmit = e => {
         e.preventDefault();
-
         // Handle form validation
-        if (!this.check_form_validation()) {
+        // 1) passesSanityCheck: Checks to see if number of roles added does not exceed num_players
+        const passesSanityCheck = this.check_form_validation();
+        if (!passesSanityCheck) {
             this.setState({
                 error_msg: 'Invalid game setup. Please try again.'
             });
             return;
         }
-        let final_setup = this.get_final_setup();
+        // 2) passesGameplayCheck: Checks to see if setup is within gameplay guidelines
+        const final_setup = this.get_final_setup();
+        const passesGameplayCheck = isRolesValid(final_setup) && isFeaturesValid(final_setup);
+        if (!passesGameplayCheck) {
+            this.setState({
+                error_msg: 'Invalid game setup. Please try again.'
+            });
+            return;
+        }
+        // Successful setup, continue with game
         this.props.onSetup(final_setup);
         this.setState({
             buttonDisabled: true
@@ -80,7 +91,7 @@ class GameSetupModal extends Component {
     };
 
     render() {
-        let role_inputs = Object.keys(this.state.roles).map((role, idx) => {
+        const role_inputs = Object.keys(this.state.roles).map((role, idx) => {
             return (
                 <CustomInput
                     type="checkbox"
@@ -93,7 +104,7 @@ class GameSetupModal extends Component {
             );
         });
 
-        let other_inputs = Object.keys(this.state.features).map((feature, idx) => {
+        const other_inputs = Object.keys(this.state.features).map((feature, idx) => {
             return (
                 <CustomInput
                     type="checkbox"
@@ -125,10 +136,10 @@ class GameSetupModal extends Component {
                         <Form onSubmit={this.onSubmit}>
                             <FormGroup>
                                 <Label for="role_selection">Number of Players: {this.props.num_players}</Label>
-                                <br></br>
+                                <hr />
                                 <Label for="role_selection">Roles:</Label>
                                 {role_inputs}
-                                <br></br>
+                                <hr />
                                 <Label for="role_selection">Other:</Label>
                                 {other_inputs}
                                 <Button

@@ -53,7 +53,6 @@ export const register = ({ name, email, password }) => dispatch => {
             })
         )
         .catch(err => {
-            console.log('YOUR REQUEST FAILED LMAO');
             dispatch(returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL'));
 
             dispatch({
@@ -116,5 +115,3 @@ export const tokenConfig = getState => {
 
     return config;
 };
-
-// export const get_id_from_token

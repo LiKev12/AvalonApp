@@ -1,9 +1,19 @@
-.RatingBanner {
+.CellCenterText {
+    text-align: center;
+}
+
+.TableContainer {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.LeaderboardBanner {
     width: 100%;
     text-align: center;
     background: #1abc9c;
     border-radius: 5px;
     margin-top: 20px;
+    margin-bottom: 20px;
     padding: 20px;
     color: white;
     font-size: 30px;

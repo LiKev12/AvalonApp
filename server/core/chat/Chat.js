@@ -27,19 +27,14 @@ class Chat {
     }
 
     _getIdxOfTopMessage() {
+        // Only get last 30 messages
         const idx = Math.max(this.messages.length - 30, 0);
         return idx;
     }
 
     _getReadableTimestamp(dateTime) {
-        // const month = this._formatDateToString(dateTime.getMonth() + 1);
-        // const day = this._formatDateToString(dateTime.getDate());
-        // const year = dateTime.getFullYear();
         const hours = this._formatDateToString(dateTime.getHours());
         const minutes = this._formatDateToString(dateTime.getMinutes());
-        // const seconds = this._formatDateToString(dateTime.getSeconds());
-
-        // const res = `[${year}/${month}/${day} @ ${hours}:${minutes}:${seconds}] `;
         const res = `[${hours}:${minutes}] `;
         return res;
     }

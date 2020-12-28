@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
-import classes from './GameRoomPublic.module.css';
+import classes from './GameRoom.module.css';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { socket } from '../../../service/socket';
+import { socket } from '../../service/socket';
 import { Button, Container } from 'reactstrap';
 
-import AccessDeniedPage from '../../Pages/AccessDeniedPage/AccessDeniedPage';
-import GameBoard from '../GameBoard/GameBoard';
-import GameEnterModal from '../GameEnterModal/GameEnterModal';
-import GameNav from '../GameCommon/GameNav/GameNav';
-import GameSetupModal from '../GameSetupModal/GameSetupModal';
-import InvalidGamePage from '../../Pages/InvalidGamePage/InvalidGamePage';
-import PlayersList from '../GameCommon/PlayersList/PlayersList';
-import LoadingSpinner from '../../Pages/Loading/LoadingSpinner';
+import AccessDeniedPage from '../Pages/AccessDeniedPage/AccessDeniedPage';
+import GameBoard from './GameBoard/GameBoard';
+import GameEnterModal from './GameEnterModal/GameEnterModal';
+import GameNav from './GameCommon/GameNav/GameNav';
+import GameSetupModal from './GameSetupModal/GameSetupModal';
+import InvalidGamePage from '../Pages/InvalidGamePage/InvalidGamePage';
+import PlayersList from './GameCommon/PlayersList/PlayersList';
+import LoadingSpinner from '../Pages/Loading/LoadingSpinner';
 
-export class GameRoomPublic extends Component {
+export class GameRoom extends Component {
     state = {
         /**
          * purely for client-side (need to wait for socket request to come back, timeout => socket => update state)
@@ -99,6 +99,16 @@ export class GameRoomPublic extends Component {
         return room_id;
     };
 
+    _get_room_pwd = () => {
+        const { is_public } = this.props;
+        if (is_public) {
+            // No room_pwd for public games
+            return null;
+        } else {
+            return this.props.match.params.pwd;
+        }
+    };
+
     socket_event_listeners = () => {
         socket.on('client_game_view_data', data => {
             const { isValid, hasLocked, hasSetup, hasStarted, hasEnded, roomLeaderId } = data;
@@ -149,35 +159,41 @@ export class GameRoomPublic extends Component {
 
     onHandleInitialize() {
         setTimeout(() => {
-            const room_id = this._get_room_id();
             const user_id = this._get_user_id();
+            const room_id = this._get_room_id();
+            const room_pwd = this._get_room_pwd();
             const data = {
+                user_id,
                 room_id,
-                user_id
+                room_pwd
             };
             socket.emit('server_game_handle_INITIALIZE', data);
         }, 1000);
     }
 
     onHandleEnter = () => {
-        const room_id = this._get_room_id();
         const user_id = this._get_user_id();
         const user_name = this.props.auth && this.props.auth.user ? this.props.auth.user.name : null;
+        const room_id = this._get_room_id();
+        const room_pwd = this._get_room_pwd();
 
         const data = {
-            room_id,
             user_id,
-            user_name
+            user_name,
+            room_id,
+            room_pwd
         };
         socket.emit('server_game_handle_ENTER', data);
     };
 
     onHandleSpectate = () => {
-        const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_id = this._get_room_id();
+        const room_pwd = this._get_room_pwd();
         const data = {
+            user_id,
             room_id,
-            user_id
+            room_pwd
         };
         socket.emit('server_game_handle_SPECTATE', data);
     };
@@ -185,10 +201,12 @@ export class GameRoomPublic extends Component {
     onLeaveRoom = () => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_pwd = this._get_room_pwd();
 
         const data = {
             user_id,
-            room_id
+            room_id,
+            room_pwd
         };
         socket.emit('server_game_handle_LEAVE', data);
     };
@@ -196,9 +214,12 @@ export class GameRoomPublic extends Component {
     onLockRoom = () => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_pwd = this._get_room_pwd();
+
         const data = {
+            user_id,
             room_id,
-            user_id
+            room_pwd
         };
         socket.emit('server_game_handle_LOCK', data);
     };
@@ -206,20 +227,26 @@ export class GameRoomPublic extends Component {
     onSetup = setup => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_pwd = this._get_room_pwd();
+
         const data = {
-            room_id,
             user_id,
+            room_id,
+            room_pwd,
             setup
         };
         socket.emit('server_game_handle_SETUP', data);
     };
 
     onStart = () => {
-        const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_id = this._get_room_id();
+        const room_pwd = this._get_room_pwd();
+
         const data = {
+            user_id,
             room_id,
-            user_id
+            room_pwd
         };
         socket.emit('server_game_handle_START', data);
     };
@@ -227,9 +254,12 @@ export class GameRoomPublic extends Component {
     onClickPlayerCard = target_idx => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_pwd = this._get_room_pwd();
+
         const data = {
-            room_id,
             user_id,
+            room_id,
+            room_pwd,
             target_idx
         };
         socket.emit('server_game_handle_SELECT', data);
@@ -238,9 +268,12 @@ export class GameRoomPublic extends Component {
     onHandleButtonClick = (button, isAffirmative) => {
         const room_id = this._get_room_id();
         const user_id = this._get_user_id();
+        const room_pwd = this._get_room_pwd();
+
         const data = {
+            user_id,
             room_id,
-            user_id
+            room_pwd
         };
         if (button === 'propose') {
             socket.emit('server_game_handle_PROPOSE', data);
@@ -284,7 +317,7 @@ export class GameRoomPublic extends Component {
         const { hasLocked, hasSetup, hasStarted, isRoomLeader, PLAYERS_LIST } = this.state;
         let roomLeaderButton = null;
         if (isRoomLeader) {
-            const needWaitToLock = PLAYERS_LIST && PLAYERS_LIST.length < 5;
+            const needWaitToLock = PLAYERS_LIST && (PLAYERS_LIST.length < 5 || PLAYERS_LIST.length > 12);
             const needLock = !hasLocked;
             const needSetup = hasLocked && !hasSetup;
             const needStart = hasSetup && !hasStarted;
@@ -377,12 +410,13 @@ export class GameRoomPublic extends Component {
     }
 }
 
-GameRoomPublic.propTypes = {
-    auth: PropTypes.object.isRequired
+GameRoom.propTypes = {
+    auth: PropTypes.object.isRequired,
+    is_public: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps, null)(GameRoomPublic);
+export default connect(mapStateToProps, null)(GameRoom);

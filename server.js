@@ -27,17 +27,16 @@ mongoose
     .connect(db, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-        useCreateIndex: true
+        useCreateIndex: true,
+        useFindAndModify: false
     })
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
-app.use('/api/items', require('./server/routes/api/items'));
 app.use('/api/users', require('./server/routes/api/users'));
 app.use('/api/auth', require('./server/routes/api/auth'));
-app.use('/api/rooms', require('./server/routes/api/rooms'));
 app.use('/api/games', require('./server/routes/api/games'));
-app.use('/api/mock_games', require('./server/routes/api/mock_games'));
+app.use('/api/ratings', require('./server/routes/api/ratings'));
 
 const port = process.env.PORT || 5000;
 
@@ -45,15 +44,18 @@ server.listen(port, () => console.log(`Server started on port ${port}`));
 
 const AvalonClass = require('./server/core/Avalon');
 const Avalon = new AvalonClass();
+const CLEAN_TIMER = 3600000; // 1 hour
+setInterval(() => Avalon.cleanRequest(), CLEAN_TIMER);
 
 const players_on_server = [];
 io.on('connection', sock => {
     players_on_server.push(sock);
     console.log(`Someone connected. ${players_on_server.length} players on.`);
 
+    // Socket Listeners: Chat
     socketChatListener.server_get_chat(io, sock, Avalon);
-    socketChatListener.testbuttonserver(io, sock, Avalon);
 
+    // Socket Listeners: Game
     socketGameListener.server_game_handle_CREATE(io, sock, Avalon);
     socketGameListener.server_game_handle_INITIALIZE(io, sock, Avalon);
     socketGameListener.server_game_handle_SPECTATE(io, sock, Avalon);
@@ -73,6 +75,7 @@ io.on('connection', sock => {
     socketGameListener.server_game_handle_USE_LOTL(io, sock, Avalon);
     socketGameListener.server_game_handle_CONFIRM_LOTL(io, sock, Avalon);
 
+    socketGameListener.server_game_CLEAN_request(io, sock, Avalon);
     socketGameListener.server_game_lobby_data(io, sock, Avalon);
     socketGameListener.server_game_view_data(io, sock, Avalon);
 

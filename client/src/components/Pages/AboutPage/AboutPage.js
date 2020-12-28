@@ -1,27 +1,90 @@
-import React from 'react';
-import { Container } from 'reactstrap';
+import React, { Component } from 'react';
 import classes from './AboutPage.module.css';
-import Merlin from '../../../media/RoleAvatars/Merlin.png';
-import Percival from '../../../media/RoleAvatars/Percival.png';
-import AboutStats from './AboutStats/AboutStats';
+import { Container } from 'reactstrap';
 
-const AboutPage = props => {
-    return (
-        <div className={classes.AboutPage}>
-            <Container>
-                <hr />
-                <h3>About the App</h3>
-                <hr />
-                <AboutStats />
-                <hr />
-                <div className={classes.AboutTextContainer}>
-                    {aboutSection}
-                    {feedbackSection}
-                </div>
-            </Container>
-        </div>
-    );
-};
+import axios from 'axios';
+
+import { Merlin, Percival } from '../../../media/RoleAvatars';
+import AboutStatsUsers from './AboutStatsUsers/AboutStatsUsers';
+import AboutStatsGames from './AboutStatsGames/AboutStatsGames';
+import AboutLeaderboard from './AboutLeaderboard/AboutLeaderboard';
+import LoadingSpinner from '../Loading/LoadingSpinner';
+
+class AboutPage extends Component {
+    state = {
+        //
+        isLoadingUsersOverTime: false,
+        isLoadingGamesOverTime: true,
+        isLoadingLeaderboard: false,
+        usersOverTimeData: null,
+        gamesOverTimeData: null,
+        leaderboardData: null
+    };
+
+    componentDidMount() {
+        // 1) Get Users data over time (New Users and Total Users)
+        axios.get(`/api/users/getUsersOverTime`).then(res => {
+            const usersOverTimeData = res.data;
+            this.setState({
+                isLoadingUsersOverTime: false,
+                usersOverTimeData
+            });
+        });
+
+        // 2) Get Games data over time (New Games and Total Games)
+        axios.get(`/api/games/getGamesOverTime`).then(res => {
+            const gamesOverTimeData = res.data;
+            this.setState({
+                isLoadingGamesOverTime: false,
+                gamesOverTimeData
+            });
+        });
+
+        // 3) Get users with the topK (set to 5) ratings
+        const ratingsTopK = 5;
+        axios.get(`/api/ratings/topRatings/${ratingsTopK}`).then(res => {
+            const leaderboardData = res.data;
+            this.setState({
+                isLoadingLeaderboard: false,
+                leaderboardData
+            });
+        });
+    }
+
+    render() {
+        const {
+            isLoadingUsersOverTime,
+            isLoadingGamesOverTime,
+            isLoadingLeaderboard,
+            usersOverTimeData,
+            gamesOverTimeData,
+            leaderboardData
+        } = this.state;
+
+        if (isLoadingUsersOverTime || isLoadingGamesOverTime || isLoadingLeaderboard) {
+            return <LoadingSpinner />;
+        }
+
+        return (
+            <div className={classes.AboutPage}>
+                <Container>
+                    <hr />
+                    <h3>About the App</h3>
+                    <hr />
+                    <AboutStatsUsers usersOverTimeData={usersOverTimeData} />
+                    <AboutStatsGames gamesOverTimeData={gamesOverTimeData} />
+                    <hr />
+                    <AboutLeaderboard leaderboardData={leaderboardData} />
+                    <hr />
+                    <div className={classes.AboutTextContainer}>
+                        {aboutSection}
+                        {feedbackSection}
+                    </div>
+                </Container>
+            </div>
+        );
+    }
+}
 
 export default AboutPage;
 
@@ -43,11 +106,7 @@ const aboutSection = (
 const feedbackSection = (
     <h6>
         Feel free to leave feedback
-        <a
-            href={`mailto:avalon.resistance.game@gmail.com?subject=AvalonGame`}
-            target="_blank"
-            rel="noopener noreferrer"
-        >
+        <a href={`mailto:avalon.app.game@gmail.com?subject=AvalonApp`} target="_blank" rel="noopener noreferrer">
             {' here'}
         </a>
         .

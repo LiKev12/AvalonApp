@@ -80,6 +80,6 @@ const getCharacterCardsProps = () => [
         avatar: DrunkMerlin,
         name: 'Drunk Merlin',
         team: 'Resistance',
-        description: ['Sees himself as Merlin', 'Sees Percival, Merlin, and Mordred as Spies', 'Maximum chaos']
+        description: ['Sees himself as Merlin', 'Sees the same number of Spies as Merlin', 'Maximum chaos']
     }
 ];

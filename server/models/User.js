@@ -7,7 +7,8 @@ const UserSchema = new Schema(
     {
         name: {
             type: String,
-            required: true
+            required: true,
+            unique: true
         },
         email: {
             type: String,
@@ -18,6 +19,10 @@ const UserSchema = new Schema(
             type: String,
             required: true
         },
+        rating: {
+            type: Number,
+            default: 1500
+        },
         register_date: {
             type: Date,
             default: Date.now
@@ -26,5 +31,4 @@ const UserSchema = new Schema(
     { collection: 'Users' }
 );
 
-// Name of collection is 'item'
 module.exports = User = mongoose.model('user', UserSchema);

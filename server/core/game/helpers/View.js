@@ -284,6 +284,8 @@ class View {
         const num_players = ordered_players.length;
         const initialHammerIdx = 4 % num_players;
         const initialLOTLIdx = features['Lady of the Lake'] ? ordered_players.length - 1 : -1;
+        const arrIdxOfPlayersDrunkMerlinSees = this._getArrIdxOfPlayersDrunkMerlinSees(ordered_players);
+        const isOberonInGame = ordered_players.map(playerObj => playerObj.role).includes('Oberon');
         // Create board for each player in game
         ordered_players.forEach(playerObjToGetID => {
             const { user_id, role, team } = playerObjToGetID;
@@ -302,10 +304,23 @@ class View {
                 player_view['teamAppearsAs'] = is_seen ? ResourceRoles[role]['Sees'][playerObj.role] : 'RESISTANCE';
                 const is_known = playerObj.role in ResourceRoles[role]['Knows'];
                 player_view['roleAppearsAs'] = is_known ? ResourceRoles[role]['Knows'][playerObj.role] : 'Unknown';
+                // special case: Drunk Merlin
+                if (role === 'DrunkMerlin') {
+                    player_view['teamAppearsAs'] = arrIdxOfPlayersDrunkMerlinSees.includes(idx) ? 'SPY' : 'RESISTANCE';
+                    if (isOberonInGame) {
+                        // Designate first person in arrIdxOfPlayersDrunkMerlinSees as Oberon
+                        const isSeenAsOberonByDrunkMerlin = arrIdxOfPlayersDrunkMerlinSees[0] === idx;
+                        player_view['roleAppearsAs'] = isSeenAsOberonByDrunkMerlin ? 'Oberon' : 'Unknown';
+                    }
+                }
 
                 const is_self = playerObj.user_id === user_id;
                 if (is_self) {
                     player_view['roleAppearsAs'] = role;
+                    // special case: Drunk Merlin
+                    if (role === 'DrunkMerlin') {
+                        player_view['roleAppearsAs'] = 'Merlin';
+                    }
                     player_view['teamAppearsAs'] = team;
                 }
                 boards[user_id].push(player_view);
@@ -477,6 +492,44 @@ class View {
         const nameGivenLOTL = ordered_players[map_id_to_idx[player_given_lotl]].user_name;
         const decideUseLOTLString = `${nameGivenLOTL} is choosing which player to use Lady of the Lake on...`;
         this.TRANSCRIPT.push(decideUseLOTLString);
+    }
+
+    /**
+     * OTHER
+     */
+
+    _getArrIdxOfPlayersDrunkMerlinSees(ordered_players) {
+        const num_players = ordered_players.length;
+        const numSpiesMerlinSees = this._getNumSpiesMerlinSees(ordered_players);
+        const idxOfDrunkMerlinPlayer = ordered_players.map(playerObj => playerObj.role).indexOf('DrunkMerlin');
+        const arrAllIdx = Array.from(Array(num_players).keys()).filter(
+            playerIdx => playerIdx !== idxOfDrunkMerlinPlayer
+        ); // [0,1,2,...,n] besides own idx
+        this._shuffle(arrAllIdx);
+        const arrIdxDrunkMerlinSees = arrAllIdx.splice(0, numSpiesMerlinSees);
+        // [4, 2, 1]
+        return arrIdxDrunkMerlinSees;
+    }
+
+    _getNumSpiesMerlinSees(ordered_players) {
+        const roles_in_game = ordered_players.map(playerObj => playerObj.role);
+        let numSpiesMerlinSees = 0;
+        roles_in_game.forEach(role => {
+            if (role in ResourceRoles['Merlin']['Sees']) {
+                numSpiesMerlinSees++;
+            }
+        });
+        return numSpiesMerlinSees;
+    }
+
+    _shuffle(arr) {
+        // Fisher-Yates Shuffle
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const x = arr[i];
+            arr[i] = arr[j];
+            arr[j] = x;
+        }
     }
 
     /**

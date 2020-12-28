@@ -7,7 +7,7 @@ import AboutPage from '../../Pages/AboutPage/AboutPage';
 import RulesPage from '../../Pages/RulesPage/RulesPage';
 import StatsPage from '../../Pages/StatsPage/StatsPage';
 
-import GameRoomPublic from '../../GameRoom/GameRoomPublic/GameRoomPublic';
+import GameRoom from '../../GameRoom/GameRoom';
 
 const appRoutes = props => {
     const sharedRoutes = (
@@ -17,13 +17,15 @@ const appRoutes = props => {
             <Route path="/rules" component={RulesPage} />
             {/** Below routes are not supposed to be "shared" but do not render otherwise (even on refresh). */}
             <Route path="/stats" component={StatsPage} />
-            <Route exact path="/game/:room_id" component={GameRoomPublic} />
+            {/* <Route exact path="/game/:room_id" component={GameRoom} />
+            <Route exact path="/game/:room_id/pwd/:room_pwd" component={GameRoom} /> */}
+            <Route exact path="/game/:room_id" render={props => <GameRoom {...props} is_public={true} />} />
+            <Route exact path="/game/:room_id/pwd/:pwd" render={props => <GameRoom {...props} is_public={false} />} />
         </Fragment>
     );
     const authRoutes = (
         <Switch>
             {sharedRoutes}
-            {/* <Route exact path="/game/:room_id/pwd/:room_pwd" component={GameRoomPrivate} /> */}
             <Redirect to="/"></Redirect>
         </Switch>
     );

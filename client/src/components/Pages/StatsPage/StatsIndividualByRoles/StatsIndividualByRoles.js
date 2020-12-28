@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table } from 'reactstrap';
+import classes from './StatsIndividualByRoles.module.css';
 
 const COLOR_BLUE = { color: '#7EC8E3' };
 const COLOR_RED = { color: '#ff726f' };
@@ -24,19 +25,21 @@ const StatsIndividualByRole = props => {
     const tableBody = byRole && byRole.length > 0 ? getTableBodyRows(byRole) : placeholderRow;
 
     const byRoleTable = (
-        <Table dark>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>Role</th>
-                    <th>Games Won</th>
-                    <th>Games Played</th>
-                    <th>Win %</th>
-                </tr>
-            </thead>
-            <tbody>{tableBody}</tbody>
-        </Table>
+        <div className={classes.TableContainer}>
+            <Table dark>
+                <thead>
+                    <tr>
+                        <th className={classes.CellCenterText}>#</th>
+                        <th className={classes.CellCenterText}>Team</th>
+                        <th className={classes.CellCenterText}>Role</th>
+                        <th className={classes.CellCenterText}>Games Won</th>
+                        <th className={classes.CellCenterText}>Games Played</th>
+                        <th className={classes.CellCenterText}>Win %</th>
+                    </tr>
+                </thead>
+                <tbody>{tableBody}</tbody>
+            </Table>
+        </div>
     );
     return <div>{byRoleTable}</div>;
 };
@@ -55,12 +58,16 @@ const getTableBodyRows = byRole => {
         const colorTeamAndRole = map_team_to_color[team];
         return (
             <tr key={idx + 1}>
-                <td>{idx + 1}</td>
-                <td style={colorTeamAndRole}>{team}</td>
-                <td style={colorTeamAndRole}>{role}</td>
-                <td>{games_won}</td>
-                <td>{games_played}</td>
-                <td>{win_percentage}</td>
+                <td className={classes.CellCenterText}>{idx + 1}</td>
+                <td className={classes.CellCenterText} style={colorTeamAndRole}>
+                    {team}
+                </td>
+                <td className={classes.CellCenterText} style={colorTeamAndRole}>
+                    {role}
+                </td>
+                <td className={classes.CellCenterText}>{games_won}</td>
+                <td className={classes.CellCenterText}>{games_played}</td>
+                <td className={classes.CellCenterText}>{win_percentage}</td>
             </tr>
         );
     });

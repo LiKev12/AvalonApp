@@ -1,0 +1,9 @@
+.ChartOuterContainer {
+    padding-bottom: 20px;
+    position: relative;
+    text-align: center;
+}
+
+.ChartInnerContainer {
+    display: inline-block;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import classes from './StatsIndividualHistory.module.css';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 
@@ -11,7 +12,7 @@ const StatsIndividualHistory = props => {
 
     const loadingRow = (
         <tr key="loading">
-            <th colSpan="6" style={{ textAlign: 'center' }}>
+            <th colSpan="8" style={{ textAlign: 'center' }}>
                 Stats are loading...
             </th>
         </tr>
@@ -19,7 +20,7 @@ const StatsIndividualHistory = props => {
 
     const noDataRow = (
         <tr key="noData">
-            <th colSpan="6" style={{ textAlign: 'center' }}>
+            <th colSpan="8" style={{ textAlign: 'center' }}>
                 No stats to show. Please play more games to see.
             </th>
         </tr>
@@ -30,26 +31,30 @@ const StatsIndividualHistory = props => {
     const tableBody = history && history.length > 0 ? getTableBodyRows(history) : placeholderRow;
 
     const historyTable = (
-        <Table dark>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Num Players</th>
-                    <th>Team</th>
-                    <th>Role</th>
-                    <th>Result</th>
-                </tr>
-            </thead>
-            <tbody>{tableBody}</tbody>
-        </Table>
+        <div className={classes.TableContainer}>
+            <Table dark>
+                <thead>
+                    <tr>
+                        <th className={classes.CellCenterText}>#</th>
+                        <th className={classes.CellCenterText}>Date</th>
+                        <th className={classes.CellCenterText}>Setting</th>
+                        <th className={classes.CellCenterText}>Type</th>
+                        <th className={classes.CellCenterText}>Num Players</th>
+                        <th className={classes.CellCenterText}>Team</th>
+                        <th className={classes.CellCenterText}>Role</th>
+                        <th className={classes.CellCenterText}>Result</th>
+                    </tr>
+                </thead>
+                <tbody>{tableBody}</tbody>
+            </Table>
+        </div>
     );
     return <div>{historyTable}</div>;
 };
 
 StatsIndividualHistory.propTypes = {
     /**
-     * history: [{time, num_players, role, team, result}]
+     * history: [{date, is_completed, is_public, is_rated, num_players, team, role, result}]
      */
     history: PropTypes.array
 };
@@ -58,18 +63,32 @@ export default StatsIndividualHistory;
 
 const getTableBodyRows = history => {
     const tableBodyRows = history.map((singleRowData, idx) => {
-        const { time, num_players, role, team, result } = singleRowData;
-        const date = getDate(time);
+        const { date, is_public, is_rated, num_players, role, team, result } = singleRowData;
+        const dateText = getDateFormatted(date);
+        const settingText = is_public ? 'public' : 'private';
+        const typeText = is_rated ? 'rated' : 'unrated';
+        const numPlayersText = num_players;
+        const teamText = team;
+        const roleText = role;
+        const resultText = result.winningTeam === team ? 'WIN' : 'LOSS';
         const colorTeamAndRole = team === 'RESISTANCE' ? COLOR_BLUE : COLOR_RED;
-        const colorResult = result === 'WIN' ? COLOR_GREEN : COLOR_RED;
+        const colorResult = resultText === 'WIN' ? COLOR_GREEN : COLOR_RED;
         return (
             <tr key={idx + 1}>
-                <td>{idx + 1}</td>
-                <td>{date}</td>
-                <td>{num_players}</td>
-                <td style={colorTeamAndRole}>{team}</td>
-                <td style={colorTeamAndRole}>{role}</td>
-                <td style={colorResult}>{result}</td>
+                <td className={classes.CellCenterText}>{idx + 1}</td>
+                <td className={classes.CellCenterText}>{dateText}</td>
+                <td className={classes.CellCenterText}>{settingText}</td>
+                <td className={classes.CellCenterText}>{typeText}</td>
+                <td className={classes.CellCenterText}>{numPlayersText}</td>
+                <td className={classes.CellCenterText} style={colorTeamAndRole}>
+                    {teamText}
+                </td>
+                <td className={classes.CellCenterText} style={colorTeamAndRole}>
+                    {roleText}
+                </td>
+                <td className={classes.CellCenterText} style={colorResult}>
+                    {resultText}
+                </td>
             </tr>
         );
     });
@@ -77,7 +96,7 @@ const getTableBodyRows = history => {
     return tableBodyRows;
 };
 
-const getDate = dateTime => {
-    const date = new Date(dateTime).toISOString().split('T')[0];
-    return date;
+const getDateFormatted = dateTime => {
+    const date_yyyy_mm_dd = new Date(dateTime).toISOString().split('T')[0];
+    return date_yyyy_mm_dd;
 };

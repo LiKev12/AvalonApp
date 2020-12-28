@@ -1,10 +1,10 @@
-.CreateRoomButton {
+.ToggleLobbyModalButton {
     margin-bottom: 2rem;
     width: 100%;
     height: 80px;
     font-size: 24px;
 }
 
-.CreateRoomModalButton {
+.CreateRoomButton {
     margin-top: 2rem;
 }

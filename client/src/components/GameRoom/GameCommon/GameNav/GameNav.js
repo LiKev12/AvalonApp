@@ -26,11 +26,11 @@ export class GameNav extends Component {
                     <NavItem>
                         <NavLink
                             onClick={() => {
-                                this.toggleActiveTab('Chat');
+                                this.toggleActiveTab('Transcript');
                             }}
-                            className={classnames({ active: this.state.activeTab === 'Chat' })}
+                            className={classnames({ active: this.state.activeTab === 'Transcript' })}
                         >
-                            Chat
+                            Transcript
                         </NavLink>
                     </NavItem>
                     <NavItem>
@@ -46,23 +46,23 @@ export class GameNav extends Component {
                     <NavItem>
                         <NavLink
                             onClick={() => {
-                                this.toggleActiveTab('Transcript');
+                                this.toggleActiveTab('Chat');
                             }}
-                            className={classnames({ active: this.state.activeTab === 'Transcript' })}
+                            className={classnames({ active: this.state.activeTab === 'Chat' })}
                         >
-                            Transcript
+                            Chat
                         </NavLink>
                     </NavItem>
                 </Nav>
                 <TabContent activeTab={this.state.activeTab}>
-                    <TabPane tabId="Chat">
-                        <GameChat room={this.props.room} />
+                    <TabPane tabId="Transcript">
+                        <GameTranscript transcript={this.props.transcript} />
                     </TabPane>
                     <TabPane tabId="Record">
                         <GameVotingRecord voting_record={this.props.voting_record} />
                     </TabPane>
-                    <TabPane tabId="Transcript">
-                        <GameTranscript transcript={this.props.transcript} />
+                    <TabPane tabId="Chat">
+                        <GameChat room={this.props.room} />
                     </TabPane>
                 </TabContent>
             </div>

@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
-import { Link } from 'react-router-dom';
-
-import { addRoomWithoutDispatch } from '../../../actions/roomActions';
-
+import React, { Component, Fragment } from 'react';
 import classes from './LobbyModal.module.css';
-import { socket } from '../../../service/socket';
+
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
+
+import { socket } from '../../../service/socket';
 
 const DEFAULT_STATE = {
     modal: false,
-    buttonDisabled: false,
-    room_id: '0',
-    room_pwd: '0',
+    room_id: null, // Ex. "123456"
+    room_pwd: null, // Ex. "abcdef"
     is_public: true,
     is_rated: false,
     isCreated: false,
-    success_msg: null
+    success_msg: null,
+    buttonDisabled: false
 };
 
 export class LobbyModal extends Component {
@@ -43,138 +41,183 @@ export class LobbyModal extends Component {
         });
     };
 
-    /**
-     * Generates a 4-digit string of numbers
-     */
-    generateRoomID = unavailable_room_ids => {
-        const available_room_ids = [...Array(10000).keys()]
-            .filter(val => ![...Array(1000).keys()].includes(val))
-            .map(el => el.toString())
-            .filter(val => !unavailable_room_ids.includes(val));
-        const room_id = available_room_ids[Math.floor(Math.random() * available_room_ids.length)];
+    _generateArrBetweenEnds = (lower, upper) => {
+        const arrBetweenEnds = [];
+        for (let i = lower; i < upper; i++) {
+            arrBetweenEnds.push(i.toString());
+        }
+        return arrBetweenEnds;
+    };
+
+    _generateRandomRoomID = lengthLimit => {
+        let room_id = '';
+        const characters = '0123456789';
+        const charactersLength = characters.length;
+        for (let i = 0; i < lengthLimit; i++) {
+            room_id += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
         return room_id;
     };
 
+    /**
+     * Generates a random 6 letter password
+     */
+    _generateRandomRoomPassword = lengthLimit => {
+        let room_pwd = '';
+        const characters = 'abcdefghijklmnopqrstuvwxyz';
+        const charactersLength = characters.length;
+        for (let i = 0; i < lengthLimit; i++) {
+            room_pwd += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return room_pwd;
+    };
+
+    /**
+     * Original: 1000
+     * New1: 130
+     * New2:
+     */
     onSubmit = e => {
         e.preventDefault();
-        this.setState({
-            buttonDisabled: true
-        });
-        axios.get('/api/rooms').then(res => {
-            const room_id = res.data;
-            // Add to database
-            this.props.addRoomWithoutDispatch({
-                room_id,
-                is_public: this.state.is_public,
-                is_rated: this.state.is_rated
-            });
-
-            // Set state to show isCreated
+        const { is_public, is_rated } = this.state;
+        // 1) Generate room_id and room_pwd on client-side
+        const room_id = this._generateRandomRoomID(6);
+        let room_pwd = null;
+        if (is_public) {
             this.setState({
                 room_id,
+                room_pwd,
                 isCreated: true,
-                success_msg: `Your room ID is ${room_id}`
+                success_msg: `Your room ID is ${room_id}`,
+                buttonDisabled: true
             });
-
-            // Send data to server for Avalon to track
-            const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
-            const data = {
+        } else {
+            room_pwd = this._generateRandomRoomPassword(6);
+            this.setState({
                 room_id,
-                user_id,
-                is_public: this.state.is_public,
-                is_rated: this.state.is_rated
-            };
-            socket.emit('server_game_handle_CREATE', data);
-        });
+                room_pwd,
+                isCreated: true,
+                success_msg: `Your room ID is ${room_id} and your password is "${room_pwd}"`,
+                buttonDisabled: true
+            });
+        }
+        // 2) Send data to server for Avalon to track
+        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
+        const data = {
+            room_id,
+            room_pwd,
+            user_id,
+            is_public,
+            is_rated
+        };
+        socket.emit('server_game_handle_CREATE', data);
     };
 
     render() {
-        let createRoomButton = (
-            <Button color="success" className={classes.CreateRoomButton} onClick={this.toggle}>
+        const toggleModalButton = (
+            <Button color="success" className={classes.ToggleLobbyModalButton} onClick={this.toggle}>
                 Create a Room
             </Button>
         );
+
+        const { modal, room_id, room_pwd, is_public, is_rated, isCreated, success_msg, buttonDisabled } = this.state;
+        const settingRadioButtons = (
+            <Fragment>
+                <FormGroup check>
+                    <Label check>
+                        <Input
+                            checked={is_public}
+                            type="radio"
+                            name="radio_public_private"
+                            onChange={() => this.handleClickPublic(true)}
+                        />
+                        Public
+                    </Label>
+                </FormGroup>
+                <FormGroup check>
+                    <Label check>
+                        <Input
+                            checked={!is_public}
+                            type="radio"
+                            name="radio_public_private"
+                            onChange={() => this.handleClickPublic(false)}
+                        />
+                        Private
+                    </Label>
+                </FormGroup>
+            </Fragment>
+        );
+        const typeRadioButtons = (
+            <Fragment>
+                <FormGroup check>
+                    <Label check>
+                        <Input
+                            checked={!is_rated}
+                            type="radio"
+                            name="radio_rated_unrated"
+                            onChange={() => this.handleClickRated(false)}
+                        />
+                        Unrated
+                    </Label>
+                </FormGroup>
+                <FormGroup check>
+                    <Label check>
+                        <Input
+                            checked={is_rated}
+                            type="radio"
+                            name="radio_rated_unrated"
+                            onChange={() => this.handleClickRated(true)}
+                        />
+                        Rated
+                    </Label>
+                </FormGroup>
+            </Fragment>
+        );
+
+        const createRoomButton = (
+            <Button color="dark" block disabled={buttonDisabled} className={classes.CreateRoomButton}>
+                Create Room
+            </Button>
+        );
+        const successMsg = isCreated ? (
+            <Alert className="mt-3" color="success">
+                {success_msg}
+            </Alert>
+        ) : null;
+
+        const gameLinkButton = (
+            <Fragment>
+                {isCreated && is_public && (
+                    <Link to={`/game/${room_id}`}>
+                        <Button color="success" style={{ marginTop: '2rem' }} block>
+                            Join Public Room
+                        </Button>
+                    </Link>
+                )}
+                {isCreated && !is_public && (
+                    <Link to={`/game/${room_id}/pwd/${room_pwd}`}>
+                        <Button color="success" style={{ marginTop: '2rem' }} block>
+                            Join Private Room
+                        </Button>
+                    </Link>
+                )}
+            </Fragment>
+        );
+
         return (
             <div>
-                {createRoomButton}
-                <Modal isOpen={this.state.modal} toggle={this.toggle}>
+                {toggleModalButton}
+                <Modal isOpen={modal} toggle={this.toggle}>
                     <ModalHeader toggle={this.toggle}>Create a Room</ModalHeader>
                     <ModalBody>
                         <Form onSubmit={this.onSubmit}>
-                            <FormGroup check>
-                                <Label check>
-                                    <Input
-                                        checked={this.state.is_public}
-                                        type="radio"
-                                        name="radio_public_private"
-                                        onClick={() => this.handleClickPublic(true)}
-                                    />
-                                    Public
-                                </Label>
-                            </FormGroup>
-                            <FormGroup check>
-                                <Label check>
-                                    <Input
-                                        checked={!this.state.is_public}
-                                        type="radio"
-                                        name="radio_public_private"
-                                        onClick={() => this.handleClickPublic(false)}
-                                        disabled
-                                    />
-                                    Private
-                                </Label>
-                            </FormGroup>
+                            {settingRadioButtons}
                             <hr />
-                            <FormGroup check>
-                                <Label check>
-                                    <Input
-                                        checked={!this.state.is_rated}
-                                        type="radio"
-                                        name="radio_rated_unrated"
-                                        onClick={() => this.handleClickRated(false)}
-                                    />
-                                    Unrated
-                                </Label>
-                            </FormGroup>
-                            <FormGroup check>
-                                <Label check>
-                                    <Input
-                                        checked={this.state.is_rated}
-                                        type="radio"
-                                        name="radio_rated_unrated"
-                                        onClick={() => this.handleClickRated(true)}
-                                    />
-                                    Rated
-                                </Label>
-                            </FormGroup>
-                            <Button
-                                color="dark"
-                                block
-                                disabled={this.state.buttonDisabled}
-                                className={classes.CreateRoomModalButton}
-                            >
-                                Create Room
-                            </Button>
-
-                            {this.state.isCreated ? (
-                                <Alert className="mt-3" color="success">
-                                    {this.state.success_msg}
-                                </Alert>
-                            ) : null}
-                            {this.state.isCreated && this.state.is_public && (
-                                <Link to={`/game/${this.state.room_id}`}>
-                                    <Button color="success" style={{ marginTop: '2rem' }} block>
-                                        Join Public Room
-                                    </Button>
-                                </Link>
-                            )}
-                            {this.state.isCreated && !this.state.is_public && (
-                                <Link to={`/game/${this.state.room_id}/pwd/${this.state.game_pwd}`}>
-                                    <Button color="success" style={{ marginTop: '2rem' }} block>
-                                        Join Private Room
-                                    </Button>
-                                </Link>
-                            )}
+                            {typeRadioButtons}
+                            <hr />
+                            {createRoomButton}
+                            {successMsg}
+                            {gameLinkButton}
                         </Form>
                     </ModalBody>
                 </Modal>
@@ -188,6 +231,4 @@ const mapStateToProps = state => ({
     room: state.room
 });
 
-export default connect(mapStateToProps, {
-    addRoomWithoutDispatch
-})(LobbyModal);
+export default connect(mapStateToProps, null)(LobbyModal);
