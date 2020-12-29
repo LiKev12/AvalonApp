@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const config = require('config');
 const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // User Model
 const User = require('../../models/User');
@@ -29,7 +29,7 @@ router.post('/', (req, res) => {
         bcrypt.compare(password, user.password).then(isMatch => {
             if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
-            jwt.sign({ id: user._id }, config.get('jwtSecret'), { expiresIn: 36000 }, (err, token) => {
+            jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: 36000 }, (err, token) => {
                 if (err) throw err;
                 res.json({
                     token,

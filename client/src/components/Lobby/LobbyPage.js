@@ -25,9 +25,9 @@ class LobbyPage extends Component {
     render() {
         const chatHeader = (
             <div>
-                <hr></hr>
+                <hr />
                 <h3>Chat</h3>
-                <hr></hr>
+                <hr />
             </div>
         );
 
