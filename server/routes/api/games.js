@@ -11,8 +11,6 @@ const Game = require('../../models/Game');
  * @access  Public
  */
 router.get('/getGamesOverTime', (req, res) => {
-    // Game.find()
-    //     .sort({ date: 1 })
     Game.aggregate([
         { $addFields: { dateFormatted: { $dateToString: { format: '%Y-%m-%d', date: '$date' } } } },
         {
@@ -58,7 +56,7 @@ router.get('/getGamesOverTime', (req, res) => {
  */
 router.get('/:user_id', (req, res) => {
     const user_id = req.params.user_id;
-    Game.find({ players: { $elemMatch: { user_id: user_id } } })
+    Game.find({ is_completed: true, players: { $elemMatch: { user_id } } })
         .sort({ date: -1 })
         .then(games => {
             const allGamesData = games.map(single_game => {
@@ -85,13 +83,84 @@ router.get('/:user_id', (req, res) => {
                     result
                 };
             });
-            // Filter out to include only games that completed
-            const completedGamesData = allGamesData.filter(gameObj => {
-                const { is_completed } = gameObj;
-                return is_completed;
-            });
-            res.json(completedGamesData);
+            res.json(allGamesData);
         });
+});
+
+/**
+ * @route   GET api/games/headtohead/user_id/:user_names
+ * @desc    Gets data from only games for specific user (for Stats page)
+ * @access  Public
+ */
+router.get('/headtohead/:user_id/:user_names', (req, res) => {
+    // 1) Convert user_names to an array of usernames (array may just contain one user_name)
+    const user_id = req.params.user_id;
+    const arr_user_names = Array.from(new Set(req.params.user_names.split(',')));
+
+    // 2) Find all completed games containing original user
+    Game.find({ is_completed: true, players: { $elemMatch: { user_id } } }).then(games => {
+        //3 For all user_names, get the data for each user_name
+        const mapUserNameToGames = new Map();
+        arr_user_names.forEach(user_name => {
+            mapUserNameToGames.set(user_name, {
+                Player: user_name,
+                Same: { 'Your Games Won': 0, 'Total Games Played': 0 },
+                Different: { 'Your Games Won': 0, 'Total Games Played': 0 }
+            });
+        });
+
+        games.forEach(game => {
+            const {
+                metadata: { map_id_to_idx, ordered_players },
+                players,
+                result: { winningTeam }
+            } = game;
+
+            const userNamesInGame = players.map(({ user_name }) => user_name);
+            userNamesInGame.forEach(userName => {
+                if (mapUserNameToGames.has(userName)) {
+                    const userTeam = ordered_players[map_id_to_idx[user_id]]['team'];
+                    const other_id = players.find(player => player.user_name === userName).user_id;
+                    const otherTeam = ordered_players[map_id_to_idx[other_id]]['team'];
+                    const isSameTeam = userTeam === otherTeam;
+                    const didUserWin = winningTeam === userTeam;
+                    const singlePlayerData = mapUserNameToGames.get(userName);
+                    if (isSameTeam) {
+                        if (didUserWin) {
+                            singlePlayerData['Same']['Your Games Won'] = singlePlayerData['Same']['Your Games Won'] + 1;
+                        }
+                        singlePlayerData['Same']['Total Games Played'] =
+                            singlePlayerData['Same']['Total Games Played'] + 1;
+                    } else {
+                        if (didUserWin) {
+                            singlePlayerData['Different']['Your Games Won'] =
+                                singlePlayerData['Different']['Your Games Won'] + 1;
+                        }
+                        singlePlayerData['Different']['Total Games Played'] =
+                            singlePlayerData['Different']['Total Games Played'] + 1;
+                    }
+                    mapUserNameToGames.set(userName, singlePlayerData);
+                }
+            });
+        });
+
+        const finalData = [];
+        arr_user_names.forEach(user_name => {
+            const singlePlayerData = mapUserNameToGames.get(user_name);
+            const hasSameGames = singlePlayerData['Same']['Total Games Played'] !== 0;
+            const hasDifferentGames = singlePlayerData['Different']['Total Games Played'] !== 0;
+            if (hasSameGames || hasDifferentGames) {
+                finalData.push(mapUserNameToGames.get(user_name));
+            }
+        });
+
+        res.json(finalData);
+    });
+
+    // const user_id = req.params.user_id;
+    // Game.find({ players: { $elemMatch: { user_id: user_id } } }).then(games => {
+    //     res.json(completedGamesData);
+    // });
 });
 
 /**

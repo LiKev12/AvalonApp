@@ -30,11 +30,12 @@ export default function(state = initialState, action) {
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                user: action.payload
+                user: action.payload.user
             };
 
         case LOGIN_SUCCESS:
         case REGISTER_SUCCESS:
+            console.log('[action payload]', action.payload);
             sessionStorage.setItem('token', action.payload.token);
             sessionStorage.setItem('user_name', action.payload.user.name);
             return {

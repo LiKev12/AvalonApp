@@ -1,0 +1,15 @@
+.CellCenterText {
+    text-align: center;
+}
+
+.CellCenterTextVertical {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.TableContainer {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

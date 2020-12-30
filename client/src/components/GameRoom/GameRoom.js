@@ -90,7 +90,8 @@ export class GameRoom extends Component {
     }
 
     _get_user_id = () => {
-        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
+        console.log('[_get_user_id]', this.props);
+        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user.id : null;
         return user_id;
     };
 

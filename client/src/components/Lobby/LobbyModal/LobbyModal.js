@@ -102,11 +102,11 @@ export class LobbyModal extends Component {
             });
         }
         // 2) Send data to server for Avalon to track
-        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
+        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user.id : null;
         const data = {
+            user_id,
             room_id,
             room_pwd,
-            user_id,
             is_public,
             is_rated
         };
@@ -227,8 +227,7 @@ export class LobbyModal extends Component {
 }
 
 const mapStateToProps = state => ({
-    auth: state.auth,
-    room: state.room
+    auth: state.auth
 });
 
 export default connect(mapStateToProps, null)(LobbyModal);

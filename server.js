@@ -41,22 +41,15 @@ app.use('/api/games', require('./server/routes/api/games'));
 app.use('/api/ratings', require('./server/routes/api/ratings'));
 
 // Serve static assets if in production
-// if (process.env.NODE_ENV === 'production') {
-//     // Set static folder
-//     app.use(express.static('client/build'));
-
-//     app.get('*', (req, res) => {
-//         res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-//     });
-// }
-app.use(express.static('client/build'));
-
-app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
-});
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'));
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    });
+}
 
 const port = process.env.PORT || 5000;
-
 server.listen(port, () => console.log(`Server started on port ${port}`));
 
 const AvalonClass = require('./server/core/Avalon');
@@ -67,7 +60,7 @@ setInterval(() => Avalon.cleanRequest(), CLEAN_TIMER);
 let num_players_on_server = 0;
 io.on('connection', sock => {
     num_players_on_server++;
-    console.log(`User connected. ${num_players_on_server} users online.`);
+    console.log(`User connected. ${num_players_on_server} user(s) online.`);
 
     // Socket Listeners: Chat
     socketChatListener.server_get_chat(io, sock, Avalon);
@@ -98,6 +91,6 @@ io.on('connection', sock => {
 
     sock.on('disconnect', () => {
         num_players_on_server--;
-        console.log(`User disconnected. ${num_players_on_server} users online.`);
+        console.log(`User disconnected. ${num_players_on_server} user(s) online.`);
     });
 });

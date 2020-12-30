@@ -11,6 +11,7 @@ import LoadingSpinner from '../Loading/LoadingSpinner';
 import StatsIndividualHistory from './StatsIndividualHistory/StatsIndividualHistory';
 import StatsIndividualOverall from './StatsIndividualOverall/StatsIndividualOverall';
 import StatsIndividualByRoles from './StatsIndividualByRoles/StatsIndividualByRoles';
+import StatsHeadToHead from './StatsHeadToHead/StatsHeadToHead';
 
 export class StatsPage extends Component {
     state = {
@@ -57,11 +58,11 @@ export class StatsPage extends Component {
                     isLoadingStats: false
                 });
             }
-        }, 2000);
+        }, 1000);
     }
 
     _get_user_id = () => {
-        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user._id : null;
+        const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user.id : null;
         return user_id;
     };
 
@@ -91,7 +92,11 @@ export class StatsPage extends Component {
                     <hr />
                     <h3>By Role</h3>
                     <hr />
-                    <StatsIndividualByRoles byRole={byRoles} />
+                    <StatsIndividualByRoles byRoles={byRoles} />
+                    <hr />
+                    <h3>Head to Head</h3>
+                    <hr />
+                    <StatsHeadToHead />
                 </Container>
             </div>
         );

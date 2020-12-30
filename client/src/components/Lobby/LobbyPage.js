@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Container } from 'reactstrap';
-import { connect } from 'react-redux';
 import classes from './LobbyPage.module.css';
 
 import Chat from '../Chat/Chat';
@@ -21,7 +20,6 @@ class LobbyPage extends Component {
             });
         });
     }
-
     render() {
         const chatHeader = (
             <div>
@@ -52,8 +50,4 @@ class LobbyPage extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
-});
-
-export default connect(mapStateToProps, null)(LobbyPage);
+export default LobbyPage;

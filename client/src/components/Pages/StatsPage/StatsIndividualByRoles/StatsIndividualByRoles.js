@@ -5,26 +5,26 @@ import classes from './StatsIndividualByRoles.module.css';
 const COLOR_BLUE = { color: '#7EC8E3' };
 const COLOR_RED = { color: '#ff726f' };
 
-const StatsIndividualByRole = props => {
-    const { byRole } = props;
+const StatsIndividualByRoles = props => {
+    const { byRoles } = props;
     const loadingRow = (
         <tr key="loading">
-            <th colSpan="6" style={{ textAlign: 'center' }}>
+            <th colSpan="6" className={classes.CellCenterText}>
                 Stats are loading...
             </th>
         </tr>
     );
     const noDataRow = (
         <tr key="noData">
-            <th colSpan="6" style={{ textAlign: 'center' }}>
+            <th colSpan="6" className={classes.CellCenterText}>
                 No stats to show. Please play more games to see.
             </th>
         </tr>
     );
-    const placeholderRow = byRole ? noDataRow : loadingRow;
-    const tableBody = byRole && byRole.length > 0 ? getTableBodyRows(byRole) : placeholderRow;
+    const placeholderRow = byRoles ? noDataRow : loadingRow;
+    const tableBody = byRoles && byRoles.length > 0 ? getTableBodyRows(byRoles) : placeholderRow;
 
-    const byRoleTable = (
+    const byRolesTable = (
         <div className={classes.TableContainer}>
             <Table dark>
                 <thead>
@@ -41,18 +41,18 @@ const StatsIndividualByRole = props => {
             </Table>
         </div>
     );
-    return <div>{byRoleTable}</div>;
+    return <div>{byRolesTable}</div>;
 };
 
-export default StatsIndividualByRole;
+export default StatsIndividualByRoles;
 
 const map_team_to_color = {
     RESISTANCE: COLOR_BLUE,
     SPY: COLOR_RED
 };
 
-const getTableBodyRows = byRole => {
-    const tableBodyRows = byRole.map((singleRowData, idx) => {
+const getTableBodyRows = byRoles => {
+    const tableBodyRows = byRoles.map((singleRowData, idx) => {
         const { team, role, games_won, games_played } = singleRowData;
         const win_percentage = getWinPercentage(games_won, games_played);
         const colorTeamAndRole = map_team_to_color[team];

@@ -12,6 +12,7 @@ import AppRoutes from './components/App/AppRoutes/AppRoutes';
 
 class App extends Component {
     componentDidMount() {
+        console.log(`Plz don't hack me ;D`);
         store.dispatch(loadUser());
     }
 

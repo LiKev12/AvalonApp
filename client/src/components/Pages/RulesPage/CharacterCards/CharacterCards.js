@@ -74,7 +74,7 @@ const getCharacterCardsProps = () => [
         avatar: Oberon,
         name: 'Oberon',
         team: 'Spy',
-        description: ['Remains hidden to other Spies', 'A wildcard to add extra chaos']
+        description: ['Remains hidden to other Spies but is known by Merlin', 'A wildcard to add extra chaos']
     },
     {
         avatar: DrunkMerlin,
