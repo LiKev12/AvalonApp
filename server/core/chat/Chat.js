@@ -42,6 +42,10 @@ class Chat {
     _formatDateToString = before => {
         return before.toString().length === 1 ? '0' + before.toString() : before.toString();
     };
+
+    get() {
+        return this;
+    }
 }
 
 // Make this a queue of last 24 hours

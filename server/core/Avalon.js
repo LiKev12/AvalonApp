@@ -1,5 +1,10 @@
 const Chat = require('./chat/Chat');
 const Game = require('./game/Game');
+const {
+    CLEAN_REQUEST_TIME_AFTER_CREATE,
+    CLEAN_REQUEST_TIME_AFTER_END,
+    CLEAN_REQUEST_TIME_LOBBY_CHAT
+} = require('../constants');
 
 class Avalon {
     constructor() {
@@ -32,26 +37,39 @@ class Avalon {
      * - end_time was over half an hour ago
      */
     cleanRequest() {
+        // Clean up games
+        const current_time = Date.now();
         Array.from(this.games_record.keys()).forEach(room_id => {
             const game = this.games_record.get(room_id);
             const { creation_time, end_time } = game.get();
-
-            const CREATION_TIME_BUFFER = 86400000; // 1 day
-            const END_TIME_BUFFER = 1800000; // 30 minutes
-            const current_time = Date.now();
-
-            const expiredAfterCreation =
-                creation_time && current_time - creation_time > CREATION_TIME_BUFFER && !end_time; // long time since creation AND no end time set
-            const expiredAfterEnd = end_time && current_time - end_time > END_TIME_BUFFER; //
-            if (expiredAfterCreation) {
-                console.log('[expiredAfterCreation]', room_id);
+            const isExpiredAfterCreation =
+                creation_time && current_time - creation_time > CLEAN_REQUEST_TIME_AFTER_CREATE && !end_time;
+            const isExpiredAfterEnd = end_time && current_time - end_time > CLEAN_REQUEST_TIME_AFTER_END;
+            if (isExpiredAfterCreation) {
+                console.log('[isExpiredAfterCreation]', room_id);
                 game.cleanUpExpiredAfterCreation();
                 this.games_record.delete(room_id);
-            } else if (expiredAfterEnd) {
-                console.log('[expiredAfterEnd]', room_id);
+                this.chats_record.delete(room_id);
+            } else if (isExpiredAfterEnd) {
+                console.log('[isExpiredAfterEnd]', room_id);
                 this.games_record.delete(room_id);
+                this.chats_record.delete(room_id);
             }
         });
+
+        // Clean up chats in lobby
+        const lobbyChat = this.chats_record.get('lobby');
+        if (lobbyChat) {
+            const { messages } = lobbyChat.get();
+            if (messages.length > 0) {
+                const lastMessage = messages[messages.length - 1];
+                const last_lobby_msg_time = lastMessage['time'];
+                const isLobbyChatExpired = current_time - last_lobby_msg_time > CLEAN_REQUEST_TIME_LOBBY_CHAT;
+                if (isLobbyChatExpired) {
+                    this.chats_record.delete('lobby');
+                }
+            }
+        }
     }
 
     getLobbyData() {

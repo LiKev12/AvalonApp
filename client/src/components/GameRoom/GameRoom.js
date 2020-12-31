@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classes from './GameRoom.module.css';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { socket } from '../../service/socket';
 import { Button, Container } from 'reactstrap';
 
@@ -11,8 +11,8 @@ import GameEnterModal from './GameEnterModal/GameEnterModal';
 import GameNav from './GameCommon/GameNav/GameNav';
 import GameSetupModal from './GameSetupModal/GameSetupModal';
 import InvalidGamePage from '../Pages/InvalidGamePage/InvalidGamePage';
-import PlayersList from './GameCommon/PlayersList/PlayersList';
 import LoadingSpinner from '../Pages/Loading/LoadingSpinner';
+import PlayersList from './GameCommon/PlayersList/PlayersList';
 
 export class GameRoom extends Component {
     state = {
@@ -90,7 +90,6 @@ export class GameRoom extends Component {
     }
 
     _get_user_id = () => {
-        console.log('[_get_user_id]', this.props);
         const user_id = this.props.auth && this.props.auth.user ? this.props.auth.user.id : null;
         return user_id;
     };

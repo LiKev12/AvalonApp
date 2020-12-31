@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { TabContent, TabPane, Nav, NavItem, NavLink } from 'reactstrap';
 
 import GameChat from '../../../Chat/Chat';
-import GameVotingRecord from './GameVotingRecord/GameVotingRecord';
 import GameTranscript from './GameTranscript/GameTranscript';
+import GameVotingRecord from './GameVotingRecord/GameVotingRecord';
 
 export class GameNav extends Component {
     state = {

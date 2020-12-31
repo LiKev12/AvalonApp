@@ -7,7 +7,7 @@ import RoundTracker from './RoundTracker/RoundTracker';
 import MissionTracker from './MissionTracker/MissionTracker';
 import GameButtons from './GameButtons/GameButtons';
 
-const gameBoard = props => {
+const GameBoard = props => {
     // PlayerCards
     let renderedPlayerCards = getPlayerCards(props);
 
@@ -26,12 +26,12 @@ const gameBoard = props => {
     );
 };
 
-gameBoard.propTypes = {
+GameBoard.propTypes = {
     /**
      * board:
-     * [{ isLeader, isSelected, isGivenExcalibur, activeState, roleAppearsAs, teamAppearsAs }]
+     * [{ isLeader, isSelected, isHammer, isGivenExcalibur, isGivenLOTL, activeState, roleAppearsAs, teamAppearsAs }]
      */
-    board: PropTypes.object,
+    board: PropTypes.array,
     button: PropTypes.string,
     team: PropTypes.string,
     /**
@@ -50,7 +50,7 @@ gameBoard.propTypes = {
     onHandleButtonClick: PropTypes.func
 };
 
-export default gameBoard;
+export default GameBoard;
 
 const getPlayerCards = props => {
     const viewBoard = props.board;
@@ -61,7 +61,7 @@ const getPlayerCards = props => {
             total_num_players: viewBoard.length,
             onClickPlayerCard: props.onClickPlayerCard
         };
-        return <PlayerCard {...playerCardsData} />;
+        return <PlayerCard key={player_idx} {...playerCardsData} />;
     });
     return renderedPlayerCards;
 };

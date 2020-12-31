@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from 'react';
-import classes from './StatsHeadToHead.module.css';
-import { Alert, Button, Input, InputGroup, InputGroupAddon, Table } from 'reactstrap';
 import axios from 'axios';
+import classes from './StatsHeadToHead.module.css';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Alert, Button, Input, InputGroup, InputGroupAddon, Table } from 'reactstrap';
 
 class StatsHeadToHead extends Component {
     state = {
@@ -46,6 +47,12 @@ class StatsHeadToHead extends Component {
         });
     };
 
+    handlePressEnter = event => {
+        if (event.key === 'Enter') {
+            this.handleSearch();
+        }
+    };
+
     handleSearch = () => {
         const { enteredNames } = this.state;
         const user_id = this._get_user_id();
@@ -83,6 +90,7 @@ class StatsHeadToHead extends Component {
                     value={enteredNames}
                     placeholder="Enter a username or a list of usernames (separated by commas, no space)..."
                     onChange={this.handleEnterNames}
+                    onKeyPress={this.handlePressEnter}
                 />
                 <InputGroupAddon addonType="append">
                     <Button color="success" onClick={this.handleSearch}>
@@ -138,6 +146,10 @@ class StatsHeadToHead extends Component {
     }
 }
 
+StatsHeadToHead.propTypes = {
+    auth: PropTypes.object
+};
+
 const mapStateToProps = state => ({
     auth: state.auth
 });
@@ -183,6 +195,7 @@ const getTableBodyRows = headToHead => {
 
 const getWinPercentage = (games_won, games_played) => {
     // Round to 1 decimal place
+    if (games_played === 0) return 0;
     const win_percentage = parseInt(Math.round((games_won / games_played) * 1000)) / 10;
     return win_percentage;
 };

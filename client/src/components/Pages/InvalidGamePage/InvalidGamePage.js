@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Container } from 'reactstrap';
 
-export class InvalidGamePage extends Component {
+class InvalidGamePage extends Component {
     render() {
         return (
             <div>

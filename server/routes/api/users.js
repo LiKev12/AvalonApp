@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
+const { ABOUT_START_DATE, ABOUT_END_DATE } = require('../../constants');
 
 // User Model
 const User = require('../../models/User');
@@ -110,17 +111,9 @@ router.get('/getUsersOverTime', (req, res) => {
 module.exports = router;
 
 const getDataWithPaddedDates = dataOverTime => {
-    // Sanity check
-    if (!dataOverTime || (dataOverTime && dataOverTime.length === 0)) {
-        return [];
-    }
-    if (dataOverTime.length === 1) {
-        return dataOverTime;
-    }
-
-    // 1) Get all dates in between
-    const startDate = dataOverTime[0]['Date'];
-    const endDate = dataOverTime[dataOverTime.length - 1]['Date'];
+    // 1) Get all dates in between a set START_DATE and END_DATE
+    const startDate = ABOUT_START_DATE;
+    const endDate = ABOUT_END_DATE;
     const arrInBetweenDates = getArrInBetweenDates(startDate, endDate);
 
     // 2) Add all the dates in between that are not in original array

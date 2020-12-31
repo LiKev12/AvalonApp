@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Container } from 'reactstrap';
 import classes from './LobbyPage.module.css';
+import { socket } from '../../service/socket';
 
 import Chat from '../Chat/Chat';
 import LobbyModal from './LobbyModal/LobbyModal';
 import LobbyTable from './LobbyTable/LobbyTable';
-import { socket } from '../../service/socket';
 
 class LobbyPage extends Component {
     state = {

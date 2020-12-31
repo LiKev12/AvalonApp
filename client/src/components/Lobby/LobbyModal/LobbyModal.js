@@ -1,10 +1,9 @@
 import React, { Component, Fragment } from 'react';
 import classes from './LobbyModal.module.css';
-
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
-
 import { socket } from '../../../service/socket';
 
 const DEFAULT_STATE = {
@@ -225,6 +224,10 @@ export class LobbyModal extends Component {
         );
     }
 }
+
+LobbyModal.propTypes = {
+    auth: PropTypes.object
+};
 
 const mapStateToProps = state => ({
     auth: state.auth

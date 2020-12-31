@@ -3,9 +3,8 @@ const mongoose = require('mongoose');
 const http = require('http');
 const socketio = require('socket.io');
 const path = require('path');
-require('dotenv').config();
-
 const app = express();
+require('dotenv').config();
 
 // Socket
 const server = http.createServer(app);
@@ -52,10 +51,11 @@ if (process.env.NODE_ENV === 'production') {
 const port = process.env.PORT || 5000;
 server.listen(port, () => console.log(`Server started on port ${port}`));
 
+// Initialize Avalon Class to serve games and chats
 const AvalonClass = require('./server/core/Avalon');
 const Avalon = new AvalonClass();
-const CLEAN_TIMER = 3600000; // 1 hour
-setInterval(() => Avalon.cleanRequest(), CLEAN_TIMER);
+const { CLEAN_REQUEST_TIME_CALL } = require('./server/constants');
+setInterval(() => Avalon.cleanRequest(), CLEAN_REQUEST_TIME_CALL);
 
 let num_players_on_server = 0;
 io.on('connection', sock => {

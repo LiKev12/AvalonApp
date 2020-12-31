@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, Container } from 'reactstrap';
 
-export class AccessDeniedPage extends Component {
+class AccessDeniedPage extends Component {
     render() {
         return (
             <div>

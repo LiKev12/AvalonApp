@@ -14,7 +14,7 @@ import {
     Unknown
 } from '../../../../media/RoleAvatars';
 
-const playerCard = props => {
+const PlayerCard = props => {
     const { player, player_idx, total_num_players, onClickPlayerCard, button } = props;
     const {
         user_name,
@@ -40,7 +40,7 @@ const playerCard = props => {
     );
 };
 
-playerCard.propTypes = {
+PlayerCard.propTypes = {
     /**
      * player:
      * { user_name, isSelected, isLeader, isHammer, isGivenExcalibur, isGivenLOTL, activeState, roleAppearsAs, teamAppearsAs }
@@ -52,7 +52,7 @@ playerCard.propTypes = {
     button: PropTypes.string
 };
 
-export default playerCard;
+export default PlayerCard;
 
 const map_name_to_avatar = {
     Assassin,

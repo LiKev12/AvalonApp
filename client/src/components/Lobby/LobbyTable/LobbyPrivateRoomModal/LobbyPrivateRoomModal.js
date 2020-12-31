@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import classes from './LobbyPrivateRoomModal.module.css';
 import PropTypes from 'prop-types';
-import { Button, Input, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Button, Input, Modal, ModalHeader, ModalBody } from 'reactstrap';
 
 class LobbyPrivateRoomModal extends Component {
     state = {

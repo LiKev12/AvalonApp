@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import classes from './StatsPage.module.css';
-import PropTypes from 'prop-types';
-
 import axios from 'axios';
+import classes from './StatsPage.module.css';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { Container } from 'reactstrap';
 
 import AccessDeniedPage from '../AccessDeniedPage/AccessDeniedPage';
 import LoadingSpinner from '../Loading/LoadingSpinner';
+import StatsIndividualByRoles from './StatsIndividualByRoles/StatsIndividualByRoles';
 import StatsIndividualHistory from './StatsIndividualHistory/StatsIndividualHistory';
 import StatsIndividualOverall from './StatsIndividualOverall/StatsIndividualOverall';
-import StatsIndividualByRoles from './StatsIndividualByRoles/StatsIndividualByRoles';
 import StatsHeadToHead from './StatsHeadToHead/StatsHeadToHead';
 
 export class StatsPage extends Component {

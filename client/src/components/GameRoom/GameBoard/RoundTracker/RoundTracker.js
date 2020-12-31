@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import classes from './RoundTracker.module.css';
 import PropTypes from 'prop-types';
 
@@ -9,16 +9,16 @@ import RoundTrackerToken3 from '../../../../media/Tokens/TokenRound3.png';
 import RoundTrackerToken4 from '../../../../media/Tokens/TokenRound4.png';
 import RoundTrackerToken5 from '../../../../media/Tokens/TokenRound5.png';
 
-const roundTracker = props => {
+const RoundTracker = props => {
     const roundTrackerTokens = getRoundTrackerTokens(props.data);
     return <div className={classes.RoundTracker}>{roundTrackerTokens}</div>;
 };
 
-roundTracker.props = {
+RoundTracker.props = {
     data: PropTypes.number
 };
 
-export default roundTracker;
+export default RoundTracker;
 
 const mapRoundToToken = {
     0: RoundTrackerToken,
@@ -44,9 +44,9 @@ const getRoundTrackerTokens = current_round => {
     const order = [1, 2, 3, 4, 5];
     order.forEach(idx => {
         if (idx === current_round) {
-            tokens.push(roundTrackerTokenCurrent);
+            tokens.push(<Fragment key={idx}>{roundTrackerTokenCurrent}</Fragment>);
         } else {
-            tokens.push(getRoundTrackerToken(idx));
+            tokens.push(<Fragment key={idx}>{getRoundTrackerToken(idx)}</Fragment>);
         }
     });
     return tokens;

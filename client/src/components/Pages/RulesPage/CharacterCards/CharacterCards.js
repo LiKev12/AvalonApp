@@ -1,5 +1,4 @@
 import React from 'react';
-import CharacterCard from './CharacterCard/CharacterCard';
 import classes from './CharacterCards.module.css';
 
 import {
@@ -13,6 +12,7 @@ import {
     Oberon,
     Percival
 } from '../../../../media/RoleAvatars';
+import CharacterCard from './CharacterCard/CharacterCard';
 
 const CharacterCards = () => {
     const characterCardsProps = getCharacterCardsProps();

@@ -1,7 +1,6 @@
 import React from 'react';
 import classes from './AboutLeaderboard.module.css';
 import PropTypes from 'prop-types';
-
 import { Table } from 'reactstrap';
 
 const AboutLeaderboard = props => {

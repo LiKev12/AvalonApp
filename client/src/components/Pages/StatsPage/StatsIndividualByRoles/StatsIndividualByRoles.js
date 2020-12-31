@@ -1,6 +1,7 @@
 import React from 'react';
-import { Table } from 'reactstrap';
 import classes from './StatsIndividualByRoles.module.css';
+import PropTypes from 'prop-types';
+import { Table } from 'reactstrap';
 
 const COLOR_BLUE = { color: '#7EC8E3' };
 const COLOR_RED = { color: '#ff726f' };
@@ -44,6 +45,10 @@ const StatsIndividualByRoles = props => {
     return <div>{byRolesTable}</div>;
 };
 
+StatsIndividualByRoles.propTypes = {
+    byRoles: PropTypes.array
+};
+
 export default StatsIndividualByRoles;
 
 const map_team_to_color = {
@@ -77,6 +82,7 @@ const getTableBodyRows = byRoles => {
 
 const getWinPercentage = (games_won, games_played) => {
     // Round to 1 decimal place
+    if (games_played === 0) return 0;
     const win_percentage = parseInt(Math.round((games_won / games_played) * 1000)) / 10;
     return win_percentage;
 };

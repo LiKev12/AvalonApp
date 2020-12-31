@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classes from './GameTranscript.module.css';
+import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
 
 export class GameTranscript extends Component {
@@ -47,6 +48,10 @@ export class GameTranscript extends Component {
         );
     }
 }
+
+GameTranscript.propTypes = {
+    transcript: PropTypes.array
+};
 
 export default GameTranscript;
 

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import classes from './GameSetupModal.module.css';
+import PropTypes from 'prop-types';
 import { Button, Modal, ModalHeader, ModalBody, Form, FormGroup, Label, CustomInput, Alert } from 'reactstrap';
+
 import { isRolesValid, isFeaturesValid } from './GameSetupValidator/GameSetupValidator';
 
 class GameSetupModal extends Component {
@@ -93,27 +95,31 @@ class GameSetupModal extends Component {
     render() {
         const role_inputs = Object.keys(this.state.roles).map((role, idx) => {
             return (
-                <CustomInput
-                    type="checkbox"
-                    id={role}
-                    name={role}
-                    label={role}
-                    onChange={e => this.onChangeCheck(e, 'roles')}
-                    checked={this.state.roles[role]}
-                />
+                <div key={idx}>
+                    <CustomInput
+                        type="checkbox"
+                        id={role}
+                        name={role}
+                        label={role}
+                        onChange={e => this.onChangeCheck(e, 'roles')}
+                        checked={this.state.roles[role]}
+                    />
+                </div>
             );
         });
 
         const other_inputs = Object.keys(this.state.features).map((feature, idx) => {
             return (
-                <CustomInput
-                    type="checkbox"
-                    id={feature}
-                    name={feature}
-                    label={feature}
-                    onChange={e => this.onChangeCheck(e, 'features')}
-                    checked={this.state.features[feature]}
-                />
+                <div key={idx}>
+                    <CustomInput
+                        type="checkbox"
+                        id={feature}
+                        name={feature}
+                        label={feature}
+                        onChange={e => this.onChangeCheck(e, 'features')}
+                        checked={this.state.features[feature]}
+                    />
+                </div>
             );
         });
 
@@ -158,5 +164,10 @@ class GameSetupModal extends Component {
         );
     }
 }
+
+GameSetupModal.propTypes = {
+    num_players: PropTypes.number,
+    onSetup: PropTypes.func
+};
 
 export default GameSetupModal;

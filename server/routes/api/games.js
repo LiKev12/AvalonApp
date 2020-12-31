@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
+const { ABOUT_START_DATE, ABOUT_END_DATE } = require('../../constants');
 
 // Game Model
 const Game = require('../../models/Game');
@@ -156,11 +157,6 @@ router.get('/headtohead/:user_id/:user_names', (req, res) => {
 
         res.json(finalData);
     });
-
-    // const user_id = req.params.user_id;
-    // Game.find({ players: { $elemMatch: { user_id: user_id } } }).then(games => {
-    //     res.json(completedGamesData);
-    // });
 });
 
 /**
@@ -171,15 +167,16 @@ router.get('/headtohead/:user_id/:user_names', (req, res) => {
  */
 router.post('/', (req, res) => {
     const newGame = new Game({
+        // Room info
         room_id: req.body.room_id,
         is_public: req.body.is_public,
         is_rated: req.body.is_rated,
-        //
+        // Time info
         creation_time: req.body.creation_time,
         start_time: req.body.start_time,
         end_time: req.body.end_time,
         is_completed: req.body.is_completed,
-        //
+        // Game info
         players: req.body.players,
         result: req.body.result,
         metadata: req.body.metadata,
@@ -191,17 +188,9 @@ router.post('/', (req, res) => {
 module.exports = router;
 
 const getDataWithPaddedDates = dataOverTime => {
-    // Sanity check
-    if (!dataOverTime || (dataOverTime && dataOverTime.length === 0)) {
-        return [];
-    }
-    if (dataOverTime.length === 1) {
-        return dataOverTime;
-    }
-
-    // 1) Get all dates in between
-    const startDate = dataOverTime[0]['Date'];
-    const endDate = dataOverTime[dataOverTime.length - 1]['Date'];
+    // 1) Get all dates in between a set START_DATE and END_DATE
+    const startDate = ABOUT_START_DATE;
+    const endDate = ABOUT_END_DATE;
     const arrInBetweenDates = getArrInBetweenDates(startDate, endDate);
 
     // 2) Add all the dates in between that are not in original array

@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './AboutStatsGames.module.css';
-
+import PropTypes from 'prop-types';
 import { LineChart, Line, Label, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 const AboutStatsGames = props => {
@@ -35,6 +35,10 @@ const AboutStatsGames = props => {
             </div>
         </div>
     );
+};
+
+AboutStatsGames.propTypes = {
+    gamesOverTimeData: PropTypes.array
 };
 
 export default AboutStatsGames;

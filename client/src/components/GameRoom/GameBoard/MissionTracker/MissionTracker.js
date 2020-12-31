@@ -6,18 +6,18 @@ import MissionTrackerTokenNull from '../../../../media/Tokens/TokenNull.png';
 import MissionTrackerTokenPass from '../../../../media/Tokens/TokenPass.png';
 import MissionTrackerTokenFail from '../../../../media/Tokens/TokenFail.png';
 
-const missionTracker = props => {
+const MissionTracker = props => {
     const order = [1, 2, 3, 4, 5];
     const tokens = [];
     order.forEach(mission_idx => {
         const { isPassed, num_spots_on_mission, num_fails_required } = props.data[mission_idx];
         const token = getMissionTrackerToken(isPassed, num_spots_on_mission, num_fails_required);
-        tokens.push(token);
+        tokens.push(<div key={mission_idx}>{token}</div>);
     });
     return <div className={classes.MissionTracker}>{tokens}</div>;
 };
 
-missionTracker.propTypes = {
+MissionTracker.propTypes = {
     /**
      * data:
      * {
@@ -31,7 +31,7 @@ missionTracker.propTypes = {
     data: PropTypes.object
 };
 
-export default missionTracker;
+export default MissionTracker;
 
 const mapMissionStatusToToken = {
     null: MissionTrackerTokenNull,

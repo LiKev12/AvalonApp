@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { Table } from 'reactstrap';
 
-const playersList = props => {
+const PlayersList = props => {
     const { players_list } = props;
     if (!players_list || players_list.length === 0) {
         return null;
@@ -39,8 +38,8 @@ const playersList = props => {
     );
 };
 
-playersList.propTypes = {
+PlayersList.propTypes = {
     players_list: PropTypes.array
 };
 
-export default playersList;
+export default PlayersList;

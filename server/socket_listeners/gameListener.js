@@ -1,3 +1,5 @@
+const { CLEAN_REQUEST_TIME_UPDATE } = require('../constants');
+
 /**
  * data: { user_id, room_id, room_pwd, is_public, is_rated }
  * Notes: Handles creating a game from lobby modal
@@ -315,7 +317,7 @@ server_game_handle_CONFIRM_LOTL = (io, sock, Avalon) => {
  * - end_time was over an hour ago
  */
 server_game_CLEAN_request = (io, sock, Avalon) => {
-    setInterval(() => _refresh_client_game_lobby_data(sock, Avalon), 3600000);
+    setInterval(() => _refresh_client_game_lobby_data(sock, Avalon), CLEAN_REQUEST_TIME_UPDATE);
 };
 
 /**

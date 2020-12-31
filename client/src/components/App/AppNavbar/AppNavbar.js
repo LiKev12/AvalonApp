@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, Container } from 'reactstrap';
+
 import { HomeLink, AboutLink, RulesLink, StatsLink } from './NavLinks/NavLinks';
 import LoginModal from '../../Auth/LoginModal';
 import LogoutLink from './NavLinks/LogoutLink';

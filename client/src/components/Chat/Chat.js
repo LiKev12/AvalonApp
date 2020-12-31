@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-
-import { Table, Input, FormGroup } from 'reactstrap';
-
-import { socket } from '../../service/socket';
 import classes from './Chat.module.css';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { Table, Input, FormGroup } from 'reactstrap';
+import { socket } from '../../service/socket';
 
 export class Chat extends Component {
     state = {

@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import classes from './AboutPage.module.css';
 import { Container } from 'reactstrap';
 
-import axios from 'axios';
-
 import { Merlin, Percival } from '../../../media/RoleAvatars';
-import AboutStatsUsers from './AboutStatsUsers/AboutStatsUsers';
-import AboutStatsGames from './AboutStatsGames/AboutStatsGames';
 import AboutLeaderboard from './AboutLeaderboard/AboutLeaderboard';
+import AboutStatsGames from './AboutStatsGames/AboutStatsGames';
+import AboutStatsUsers from './AboutStatsUsers/AboutStatsUsers';
 import LoadingSpinner from '../Loading/LoadingSpinner';
 
 class AboutPage extends Component {
