@@ -18,9 +18,9 @@ const socketGameListener = require('./server/socket_listeners/gameListener');
 app.use(express.json());
 
 // DB Config
-const dbUsername = process.env.DATABASE_MONGO_URI_TEST_USERNAME;
-const dbPassword = process.env.DATABASE_MONGO_URI_TEST_PASSWORD;
-const dbName = process.env.DATABASE_MONGO_URI_TEST_DBNAME;
+const dbUsername = process.env.DATABASE_MONGO_URI_PROD_USERNAME;
+const dbPassword = process.env.DATABASE_MONGO_URI_PROD_PASSWORD;
+const dbName = process.env.DATABASE_MONGO_URI_PROD_DBNAME;
 const mongoURI = `mongodb+srv://${dbUsername}:${dbPassword}@cluster0-oqjxe.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
 // Connect to Mongo

@@ -1,27 +1,7 @@
-Deploying to DigitalOcean
+Resources
+
+Deploying
 - https://www.youtube.com/watch?v=My3c4IQHq_Y&t=2299s&ab_channel=RizwanKhan
 - https://webscript.info/rizwan/how-to-deploy-your-reactjs-application-in-digital-ocean-cloud-server-5f26b6788e558
 - https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04
-
-
-
-1) After login/register
-{token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmY…DI1fQ.vNedT4k46OpG0pq7cspzi6ep8bVrgsQoGKJrlRgo2ac", isAuthenticated: true, isLoading: false, user: {…}}
-isAuthenticated: true
-isLoading: false
-token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYjc1ZDgzZDUwZjE1MDMwMjgwNDM0OSIsImlhdCI6MTYwOTI3NTQyNSwiZXhwIjoxNjA5MzExNDI1fQ.vNedT4k46OpG0pq7cspzi6ep8bVrgsQoGKJrlRgo2ac"
-user:
-email: "user1@gmail.com"
-id: "5fb75d83d50f150302804349"
-name: "user1"
-
-2) After refresh
-user: 
-email: "user15@gmail.com"
-name: "user15"
-rating: 1500
-register_date: "2020-12-29T20:59:09.786Z"
-__v: 0
-_id: "5feb989d763ec5fa7d3244ac"
-
 

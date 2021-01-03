@@ -53,7 +53,7 @@ const GameSchema = new Schema(
             default: Date.now
         }
     },
-    { collection: 'TestGames' }
+    { collection: 'Games' }
 );
 
 module.exports = Game = mongoose.model('game', GameSchema);

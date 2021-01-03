@@ -12,15 +12,15 @@ const User = require('../../models/User');
 // @desc    Authenticate new user
 // @access  Public
 router.post('/', (req, res) => {
-    const { email, password } = req.body;
+    const { name, password } = req.body;
 
     // Simple validation
-    if (!email || !password) {
+    if (!name || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }
 
     // Check for existing user
-    User.findOne({ email }).then(user => {
+    User.findOne({ name }).then(user => {
         if (!user) {
             return res.status(400).json({ msg: 'User does not exist' });
         }

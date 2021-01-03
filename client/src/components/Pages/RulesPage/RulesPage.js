@@ -38,18 +38,29 @@ const featuresSection = (
 
 const rulesSection = (
     <Fragment>
-        <hr />
-        <h3>Rules</h3>
-        <hr />
-        <p>The rules of Avalon are explained nicely in this video here:</p>
-        <div className={classes.RulesVideoContainer}>
-            <iframe
-                title="The Resistance: Avalon - How To Play"
-                className="mb-3 mt-3 "
-                width="625"
-                height="400"
-                src="https://www.youtube.com/embed/rXlK3NZjLGc"
-            ></iframe>
+        <div>
+            <hr />
+            <h3>Rules</h3>
+            <hr />
+            <p>
+                The rules of Avalon are explained nicely in this
+                <a
+                    href="http://upload.snakesandlattes.com/rules/r/ResistanceAvalon.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {' '}
+                    guide{' '}
+                </a>{' '}
+                and video here:
+            </p>
+            <div className={classes.RulesVideoContainer}>
+                <iframe
+                    title="The Resistance: Avalon - How To Play"
+                    className="mb-3 mt-3 "
+                    src="https://www.youtube.com/embed/rXlK3NZjLGc"
+                ></iframe>
+            </div>
         </div>
     </Fragment>
 );

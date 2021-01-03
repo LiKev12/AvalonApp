@@ -9,7 +9,7 @@ import { clearErrors } from '../../actions/errorActions';
 class LoginModal extends Component {
     state = {
         modal: false,
-        email: '',
+        name: '',
         password: '',
         msg: null
     };
@@ -53,10 +53,10 @@ class LoginModal extends Component {
     onSubmit = e => {
         e.preventDefault();
 
-        const { email, password } = this.state;
+        const { name, password } = this.state;
 
         const user = {
-            email,
+            name,
             password
         };
 
@@ -74,15 +74,15 @@ class LoginModal extends Component {
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                     <ModalHeader toggle={this.toggle}>Login</ModalHeader>
                     <ModalBody>
-                        {this.state.msg ? <Alert color="danger">{this.state.msg} </Alert> : null}
+                        {this.state.msg ? <Alert color="danger">{this.state.msg}</Alert> : null}
                         <Form onSubmit={this.onSubmit}>
                             <FormGroup>
-                                <Label for="email">Email</Label>
+                                <Label for="name">Username</Label>
                                 <Input
-                                    type="email"
-                                    name="email"
-                                    id="email"
-                                    placeholder="Email"
+                                    type="text"
+                                    name="name"
+                                    id="name"
+                                    placeholder="Username"
                                     className="mb-3"
                                     onChange={this.onChange}
                                 />

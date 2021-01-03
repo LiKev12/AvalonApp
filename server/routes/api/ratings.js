@@ -11,7 +11,9 @@ router.get('/topRatings/:topK', (req, res) => {
         .sort({ rating: -1 })
         .then(users => {
             const userRatingsTopK = [];
-            for (let i = 0; i < topK; i++) {
+            const numUsers = users.length;
+            const topK_limit = Math.min(numUsers, topK);
+            for (let i = 0; i < topK_limit; i++) {
                 const user = users[i];
                 const { name: user_name, rating } = user;
                 userRatingsTopK.push({ user_name, rating });

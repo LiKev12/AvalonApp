@@ -89,7 +89,7 @@ export default AboutPage;
 
 const aboutSection = (
     <div>
-        <h4>This was a fun project done by 2 friends in quarantine during the 2020 Covid Pandemic.</h4>
+        <h4>This was a fun project done by 2 friends in quarantine during the Covid-19 Pandemic.</h4>
         <h5>
             <div style={{ fontStyle: 'italic' }}>
                 ~ Art and design credits to a secret Merlin, coded by her Percival ~
@@ -104,9 +104,13 @@ const aboutSection = (
 
 const feedbackSection = (
     <h6>
-        Feel free to leave feedback
+        Feel free to leave feedback{' '}
         <a href={`mailto:avalon.app.game@gmail.com?subject=AvalonApp`} target="_blank" rel="noopener noreferrer">
-            {' here'}
+            here
+        </a>
+        . GitHub link{' '}
+        <a href="https://github.com/LiKev12/AvalonApp" target="_blank" rel="noopener noreferrer">
+            here
         </a>
         .
     </h6>
