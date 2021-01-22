@@ -3,12 +3,14 @@
 ## About
 This [app](https://avalonapp.io/) was a hobby project created by 2 friends to allow fans of the popular Avalon board game to play online.
 
-## Technologies
+## Technologies and Libraries
 
 - ReactJS (Frontend)
 - NodeJS and Express (Backend)
 - MongoDB (Database)
 - SocketIO (for real-time gameplay and chat)
+- Recharts (for easy graphs)
+- Reactstrap (for using bootstrap components in React)
 
 ## How to Play
 1. Register a user (requires username, email, and password)
