@@ -77,14 +77,15 @@
 
 .ExcaliburMarker {
     position: absolute;
-    top: 30%;
-    right: 62%;
+    /* transform: scaleX(-1); flip horizontallly */
+    top: 4%;
+    right: 18%;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     margin: auto;
     background: url('../../../../media/Markers/Excalibur_Marker.png');
-    background-size: 30px;
+    background-size: 62px;
     background-repeat: no-repeat;
     background-position: center;
 }
