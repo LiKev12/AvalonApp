@@ -91,9 +91,15 @@ This app was a hobby project created by 2 friends to allow fans of the Avalon bo
 
 ## 
 
+**Q:** I accidentally closed my browser, can I still rejoin the game?
+
+**A:** Yes, please log back in and rejoin the game room.
+
+##
+
 **Q:** The game seems frozen / I'm not sure what to do.
 
-**A:** First, make sure you've read the rules and are familiar with the game. For example, if the game has Excalibur enabled, the team leader must first designate a fellow player to give Excalibur before the team can be proposed. Reading the game transcript can also be helpful to see which action is pending. If everything seems in place and the UI is not correctly reflecting the game state, please refresh the game and rejoin the room.
+**A:** First, make sure you've read the rules and are familiar with the game. For example, if the game has Excalibur enabled, the team leader must first designate a fellow player to give Excalibur before the team can be proposed. Reading the game transcript can also be helpful to see which action is pending. If everything seems in place and you believe the UI is not correctly reflecting the game state, please refresh the game and rejoin the room.
 
 ## 
 
