@@ -4,7 +4,6 @@
 This [app](https://avalonapp.io/) was a hobby project created by 2 friends to allow fans of the popular Avalon board game to play online.
 
 ## Technologies and Libraries
-
 - ReactJS (Frontend)
 - NodeJS and Express (Backend)
 - MongoDB (Database)
@@ -18,6 +17,10 @@ This [app](https://avalonapp.io/) was a hobby project created by 2 friends to al
 3. Wait for others to join your newly created game room (or invite your friends) 
 4. Select the roles and setup for your game
 5. Play!
+
+## Contact
+- See **About** page for more details, or reach me at avalon.app.game@gmail.com
+- Open to comments, questions, or suggestions on how to improve the experience :) 
 
 ## Features
 
@@ -38,17 +41,12 @@ This [app](https://avalonapp.io/) was a hobby project created by 2 friends to al
         * Player chat
 
 4. Individual Stats
-    * Overall individual stats and head-to-head stats available in the **Stats** page
+    * Overall individual stats and head-to-head stats are available in the **Stats** page
     * Individual stats show game history, win/loss by team, and win/loss by role
     
 5. App Stats
-    * Number of players and users over time on app displayed in the **About** page
+    * Number of players and users over time on app are displayed in the **About** page
     * Top 5 players on site by rating are featured on the leaderboard in the **About** page
-
-
-## Contact
-- See **About** page for more details, or reach me at avalon.app.game@gmail.com
-- Open to comments, questions, or suggestions on how to improve the experience :) 
 
 ## FAQ
 **Q:** How do I play Avalon?
