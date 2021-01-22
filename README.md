@@ -9,8 +9,8 @@ This [app](https://avalonapp.io/) was a hobby project created by 2 friends to al
 - NodeJS and Express (Backend)
 - MongoDB (Database)
 - SocketIO (for real-time gameplay and chat)
-- Recharts (for easy graphs)
 - Reactstrap (for using bootstrap components in React)
+- Recharts (for easy graphs)
 
 ## How to Play
 1. Register a user (requires username, email, and password)
