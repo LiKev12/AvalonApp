@@ -3,6 +3,9 @@
 ## About
 This [app](https://avalonapp.io/) was a hobby project created by 2 friends to allow fans of the popular Avalon board game to play online.
 
+## Demo
+![demo_gif](https://github.com/LiKev12/AvalonApp/blob/main/misc/AvalonApp_Demo.gif)
+
 ## Technologies and Libraries
 - ReactJS (Frontend)
 - NodeJS and Express (Backend)
