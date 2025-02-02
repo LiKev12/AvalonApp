@@ -13,41 +13,39 @@ class AboutPage extends Component {
     state = {
         //
         isLoadingUsersOverTime: false,
-        isLoadingGamesOverTime: true,
+        isLoadingGamesOverTime: false,
         isLoadingLeaderboard: false,
         usersOverTimeData: null,
         gamesOverTimeData: null,
-        leaderboardData: null
+        leaderboardData: null,
     };
 
     componentDidMount() {
-        // 1) Get Users data over time (New Users and Total Users)
-        axios.get(`/api/users/getUsersOverTime`).then(res => {
-            const usersOverTimeData = res.data;
-            this.setState({
-                isLoadingUsersOverTime: false,
-                usersOverTimeData
-            });
-        });
-
-        // 2) Get Games data over time (New Games and Total Games)
-        axios.get(`/api/games/getGamesOverTime`).then(res => {
-            const gamesOverTimeData = res.data;
-            this.setState({
-                isLoadingGamesOverTime: false,
-                gamesOverTimeData
-            });
-        });
-
-        // 3) Get users with the topK (set to 5) ratings
-        const ratingsTopK = 5;
-        axios.get(`/api/ratings/topRatings/${ratingsTopK}`).then(res => {
-            const leaderboardData = res.data;
-            this.setState({
-                isLoadingLeaderboard: false,
-                leaderboardData
-            });
-        });
+        // // 1) Get Users data over time (New Users and Total Users)
+        // axios.get(`/api/users/getUsersOverTime`).then((res) => {
+        //     const usersOverTimeData = res.data;
+        //     this.setState({
+        //         isLoadingUsersOverTime: false,
+        //         usersOverTimeData,
+        //     });
+        // });
+        // // 2) Get Games data over time (New Games and Total Games)
+        // axios.get(`/api/games/getGamesOverTime`).then((res) => {
+        //     const gamesOverTimeData = res.data;
+        //     this.setState({
+        //         isLoadingGamesOverTime: false,
+        //         gamesOverTimeData,
+        //     });
+        // });
+        // // 3) Get users with the topK (set to 5) ratings
+        // const ratingsTopK = 5;
+        // axios.get(`/api/ratings/topRatings/${ratingsTopK}`).then((res) => {
+        //     const leaderboardData = res.data;
+        //     this.setState({
+        //         isLoadingLeaderboard: false,
+        //         leaderboardData,
+        //     });
+        // });
     }
 
     render() {
@@ -57,12 +55,12 @@ class AboutPage extends Component {
             isLoadingLeaderboard,
             usersOverTimeData,
             gamesOverTimeData,
-            leaderboardData
+            leaderboardData,
         } = this.state;
 
-        if (isLoadingUsersOverTime || isLoadingGamesOverTime || isLoadingLeaderboard) {
-            return <LoadingSpinner />;
-        }
+        // if (isLoadingUsersOverTime || isLoadingGamesOverTime || isLoadingLeaderboard) {
+        //     return <LoadingSpinner />;
+        // }
 
         return (
             <div className={classes.AboutPage}>
@@ -70,15 +68,17 @@ class AboutPage extends Component {
                     <hr />
                     <h3>About the App</h3>
                     <hr />
-                    <AboutStatsUsers usersOverTimeData={usersOverTimeData} />
-                    <AboutStatsGames gamesOverTimeData={gamesOverTimeData} />
-                    <hr />
-                    <AboutLeaderboard leaderboardData={leaderboardData} />
-                    <hr />
                     <div className={classes.AboutTextContainer}>
                         {aboutSection}
                         {feedbackSection}
                     </div>
+                    <hr />
+                    <h4>Stats temporarily down, peaked at 150 active users and over 500 games</h4>
+                    <hr />
+                    <AboutStatsUsers usersOverTimeData={usersOverTimeData} />
+                    <AboutStatsGames gamesOverTimeData={gamesOverTimeData} />
+                    <hr />
+                    <AboutLeaderboard leaderboardData={leaderboardData} />
                 </Container>
             </div>
         );
@@ -96,8 +96,8 @@ const aboutSection = (
             </div>
         </h5>
         <div className={classes.Avatars}>
-            <img src={Merlin} alt="Merlin" />
-            <img src={Percival} alt="Percival" />
+            <img src={Merlin} alt='Merlin' />
+            <img src={Percival} alt='Percival' />
         </div>
     </div>
 );
@@ -105,11 +105,11 @@ const aboutSection = (
 const feedbackSection = (
     <h6>
         Feel free to leave feedback{' '}
-        <a href={`mailto:avalon.app.game@gmail.com?subject=AvalonApp`} target="_blank" rel="noopener noreferrer">
+        <a href={`mailto:avalon.app.game@gmail.com?subject=AvalonApp`} target='_blank' rel='noopener noreferrer'>
             here
         </a>
         . GitHub link{' '}
-        <a href="https://github.com/LiKev12/AvalonApp" target="_blank" rel="noopener noreferrer">
+        <a href='https://github.com/LiKev12/AvalonApp' target='_blank' rel='noopener noreferrer'>
             here
         </a>
         .

@@ -4,7 +4,7 @@ import { NavLink } from 'reactstrap';
 export function HomeLink() {
     return (
         <div>
-            <NavLink href="/">Home</NavLink>
+            <NavLink href='/AvalonApp/#'>Home</NavLink>
         </div>
     );
 }
@@ -12,7 +12,7 @@ export function HomeLink() {
 export function AboutLink() {
     return (
         <div>
-            <NavLink href="/about">About</NavLink>
+            <NavLink href='/AvalonApp/#/about'>About</NavLink>
         </div>
     );
 }
@@ -20,7 +20,7 @@ export function AboutLink() {
 export function RulesLink() {
     return (
         <div>
-            <NavLink href="/rules">Rules</NavLink>
+            <NavLink href='/AvalonApp/#/rules'>Rules</NavLink>
         </div>
     );
 }
@@ -28,7 +28,7 @@ export function RulesLink() {
 export function StatsLink() {
     return (
         <div>
-            <NavLink href="/stats">Stats</NavLink>
+            <NavLink href='/AvalonApp/#/stats'>Stats</NavLink>
         </div>
     );
 }

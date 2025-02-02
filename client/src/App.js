@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, HashRouter } from 'react-router-dom';
 import store from './store';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,10 +19,10 @@ class App extends Component {
     render() {
         return (
             <Provider store={store}>
-                <Router>
+                <HashRouter>
                     <AppNavbar />
                     <AppRoutes />
-                </Router>
+                </HashRouter>
             </Provider>
         );
     }
