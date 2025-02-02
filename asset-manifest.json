@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/AvalonApp/static/css/main.4acbe44b.chunk.css",
-    "main.js": "/AvalonApp/static/js/main.2ab26e9c.chunk.js",
-    "main.js.map": "/AvalonApp/static/js/main.2ab26e9c.chunk.js.map",
+    "main.js": "/AvalonApp/static/js/main.c3ea3607.chunk.js",
+    "main.js.map": "/AvalonApp/static/js/main.c3ea3607.chunk.js.map",
     "runtime-main.js": "/AvalonApp/static/js/runtime-main.bd4b541c.js",
     "runtime-main.js.map": "/AvalonApp/static/js/runtime-main.bd4b541c.js.map",
     "static/css/2.20aa2d7b.chunk.css": "/AvalonApp/static/css/2.20aa2d7b.chunk.css",
@@ -42,6 +42,6 @@
     "static/css/2.20aa2d7b.chunk.css",
     "static/js/2.c9ed9022.chunk.js",
     "static/css/main.4acbe44b.chunk.css",
-    "static/js/main.2ab26e9c.chunk.js"
+    "static/js/main.c3ea3607.chunk.js"
   ]
 }
